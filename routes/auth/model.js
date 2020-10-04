@@ -1,0 +1,119 @@
+const jwt = require('jsonwebtoken');
+const { database } = require('../../database/database');
+
+const generateAccessToken = (user) => {
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
+  });
+};
+
+const generateRefreshToken = (user) => {
+  return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+};
+
+const verifyRefreshToken = (refreshToken) => {
+  return jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+};
+
+const validateLoginInfo = async (username) => {
+  return database
+    .select('*')
+    .from('usuarios')
+    .where('username', '=', username)
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const setNewUser = async (
+  username,
+  hashpass,
+  rol,
+  contact_number,
+  correo_electronico,
+) => {
+  return database('usuarios')
+    .insert({
+      username: username,
+      password: hashpass,
+      rol: rol,
+      contact_number: contact_number,
+      correo_electronico: correo_electronico,
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const saveRefreshToken = async (refreshToken, username, time) => {
+  return database('usuarios')
+    .where('username', '=', username)
+    .update({
+      RT: refreshToken,
+      login_time: time,
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const verifyRefreshTokenDB = async (refreshToken) => {
+  return database
+    .select('user_id', 'rol')
+    .from('usuarios')
+    .where('RT', '=', refreshToken)
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const resetUserPassword = (username, password) => {
+  return database('usuarios')
+    .where('username', '=', username)
+    .update({
+      password: password,
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const deleteRefreshToken = (user_id) => {
+  return database('usuarios')
+    .where('user_id', '=', user_id)
+    .update({
+      RT: null,
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+module.exports.generateAccessToken = generateAccessToken;
+module.exports.generateRefreshToken = generateRefreshToken;
+module.exports.generateAccessToken = generateAccessToken;
+module.exports.setNewUser = setNewUser;
+module.exports.validateLoginInfo = validateLoginInfo;
+module.exports.saveRefreshToken = saveRefreshToken;
+module.exports.verifyRefreshTokenDB = verifyRefreshTokenDB;
+module.exports.verifyRefreshToken = verifyRefreshToken;
+module.exports.resetUserPassword = resetUserPassword;
+module.exports.deleteRefreshToken = deleteRefreshToken;
