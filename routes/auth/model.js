@@ -57,6 +57,7 @@ const saveRefreshToken = async (refreshToken, username, time) => {
     .update({
       RT: refreshToken,
       login_time: time,
+      last_activity: time,
     })
     .then((user) => {
       return user;
@@ -107,6 +108,20 @@ const deleteRefreshToken = (user_id) => {
     });
 };
 
+const updateActivity = async (id_user, time) => {
+  return database('usuarios')
+    .where('user_id', '=', id_user)
+    .update({
+      last_activity: time,
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
 module.exports.generateAccessToken = generateAccessToken;
 module.exports.generateRefreshToken = generateRefreshToken;
 module.exports.generateAccessToken = generateAccessToken;
@@ -117,3 +132,4 @@ module.exports.verifyRefreshTokenDB = verifyRefreshTokenDB;
 module.exports.verifyRefreshToken = verifyRefreshToken;
 module.exports.resetUserPassword = resetUserPassword;
 module.exports.deleteRefreshToken = deleteRefreshToken;
+module.exports.updateActivity = updateActivity;

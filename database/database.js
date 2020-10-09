@@ -1,7 +1,7 @@
-const knex = require("knex");
+const knex = require('knex');
 
 const database = knex({
-  client: "mysql",
+  client: 'mysql',
   connection: {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

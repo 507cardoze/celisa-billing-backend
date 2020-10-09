@@ -12,6 +12,7 @@ const {
   verifyRefreshToken,
   resetUserPassword,
   deleteRefreshToken,
+  updateActivity,
 } = require('./model.js');
 
 router.post('/login', async (req, res) => {
@@ -36,13 +37,14 @@ router.post('/login', async (req, res) => {
     const saveRefreshDB = await saveRefreshToken(
       refreshToken,
       username,
-      moment().format(),
+      moment().format('YYYY-MM-D HH:mm:ss'),
     );
     if (!saveRefreshDB) res.status(400).json(saveRefreshDB);
     res
       .status(201)
       .json({ accessToken: accessToken, refreshToken: refreshToken });
   } catch (err) {
+    console.log(err);
     res.status(400).json(err);
   }
 });
@@ -88,16 +90,25 @@ router.post('/token', async (req, res) => {
 
   try {
     const verifingRefreshToken = await verifyRefreshTokenDB(refreshToken);
-    console.log(verifingRefreshToken);
     if (verifingRefreshToken.length === 0)
       return res.status(401).json('No esta autorizado');
     const verifyRFT = verifyRefreshToken(refreshToken);
     if (!verifyRFT) res.status(401).json('No esta autorizado');
+
     let user = {
       user_id: verifyRFT.user_id,
     };
     const accessToken = generateAccessToken(user);
-    res.json({ accessToken: accessToken });
+    const registerActivity = await updateActivity(
+      verifyRFT.user_id,
+      moment().format('YYYY-MM-D HH:mm:ss'),
+    );
+    console.log(registerActivity);
+    if (registerActivity) {
+      res.json({ accessToken: accessToken });
+    } else {
+      res.json('server error');
+    }
   } catch (error) {
     res.status(400).json(error);
   }
@@ -127,7 +138,7 @@ router.post('/reset', async (req, res) => {
   }
 });
 
-router.post('/logout', verify, async (req, res) => {
+router.delete('/logout', verify, async (req, res) => {
   const user_id = req.user.user_id;
   try {
     const query = await deleteRefreshToken(user_id);

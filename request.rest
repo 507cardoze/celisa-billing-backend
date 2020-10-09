@@ -3,8 +3,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmltIiwia
 
 ###
 
-DELETE http://localhost:4000/logout 
+DELETE http://localhost:5000/v1/auth/logout 
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE2MDIyMTgyMTUsImV4cCI6MTYwMjI2MTQxNX0.lCdZm5dAHr9jITf0h1fbTWZ8NWKlGNj8GXFZgSZXu_o
 
 {
 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSmltIiwiaWF0IjoxNTY4NzU5OTIyfQ.RT6wszuCeFLwC_6ksmNMIELxiC5s-uRivfRxyZof5ag"
@@ -16,7 +17,7 @@ POST http://localhost:5000/v1/auth/token
 Content-Type: application/json
 
 {
-"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE2MDE4NDI3NDB9.umw8nNB9jtL8Ja4bt20AD7M3GSRISY6P6qB9Gm21vps"
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJpYXQiOjE2MDIyMTkwMzR9.8SBrnxWAHoK-_JnO-15_-RTe5Ve5Gn8WkC-Mvhgjp-E"
 }
 
 ###
