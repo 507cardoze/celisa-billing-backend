@@ -103,7 +103,6 @@ router.post('/token', async (req, res) => {
       verifyRFT.user_id,
       moment().format('YYYY-MM-D HH:mm:ss'),
     );
-    console.log(registerActivity);
     if (registerActivity) {
       res.json({ accessToken: accessToken });
     } else {
