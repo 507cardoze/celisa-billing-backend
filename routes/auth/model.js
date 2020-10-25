@@ -148,6 +148,25 @@ const getUserData = async (user_id) => {
   })
 }
 
+const updateUserDetails = async (name, lastname, email, number, id_pais, address, user_id) => {
+  return database('usuarios')
+    .where('user_id', '=', user_id)
+    .update({
+      name: name,
+      lastname: lastname,
+      correo_electronico: email,
+      contact_number: number,
+      id_pais: id_pais,
+      address:address
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
 module.exports.generateAccessToken = generateAccessToken;
 module.exports.generateRefreshToken = generateRefreshToken;
 module.exports.generateAccessToken = generateAccessToken;
@@ -160,3 +179,4 @@ module.exports.resetUserPassword = resetUserPassword;
 module.exports.deleteRefreshToken = deleteRefreshToken;
 module.exports.updateActivity = updateActivity;
 module.exports.getUserData = getUserData;
+module.exports.updateUserDetails = updateUserDetails;

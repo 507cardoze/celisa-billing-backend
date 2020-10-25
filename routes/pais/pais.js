@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const verify = require('../../functions/verifytoken');
-const moment = require('moment');
 const {getAllPaises} = require('./model.js');
 
 router.get('/all', verify, async (req, res) => {

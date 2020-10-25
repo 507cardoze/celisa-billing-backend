@@ -13,7 +13,8 @@ const {
   resetUserPassword,
   deleteRefreshToken,
   updateActivity,
-  getUserData
+  getUserData,
+  updateUserDetails
 } = require('./model.js');
 
 router.post('/login', async (req, res) => {
@@ -83,7 +84,7 @@ router.post('/register', async (req, res) => {
       contact_number,
       correo_electronico,
       name,
-    lastname,
+      lastname,
       address,
       id_pais
     );
@@ -125,7 +126,7 @@ router.post('/token', async (req, res) => {
   }
 });
 
-router.post('/reset', async (req, res) => {
+router.post('/reset',verify, async (req, res) => {
   const { username, password, password_repeat } = req.body;
   //   const { error } = resetValidation(req.body);
   //   if (error) return res.status(400).json(error.details[0].message);
@@ -170,6 +171,21 @@ router.get('/user-data', verify, async (req, res) => {
   } catch (error) {
     res.status(400).json(error);
   }
+});
+
+router.put('/update-data',verify, async (req, res) => {
+  const { name, lastname, email, number, id_pais, address, user_id } = req.body;
+  try {
+    const query = await updateUserDetails(name, lastname, email, number, id_pais, address, user_id);
+    if (query) {
+      console.log("actualizando generales de usuario ... ")
+      res.status(200).json('Detalles Actualizados.');
+    } else {
+      res.status(400).json('error');
+    }
+  } catch (error) {
+    res.status(400).json(error);
+  }   
 });
 
 module.exports = router;
