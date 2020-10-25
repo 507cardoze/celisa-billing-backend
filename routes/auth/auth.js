@@ -13,6 +13,7 @@ const {
   resetUserPassword,
   deleteRefreshToken,
   updateActivity,
+  getUserData
 } = require('./model.js');
 
 router.post('/login', async (req, res) => {
@@ -24,7 +25,7 @@ router.post('/login', async (req, res) => {
     const userData = await validateLoginInfo(username);
     if (!userData) return res.status(400).json(userData);
     if (userData.length === 0)
-      return res.status(400).json(`Este usuario no esta registrado.`);
+      return res.status(400).json(`Este usuario no valido o esta desactivado.`);
 
     if (!bcrypt.compareSync(password, userData[0].password))
       return res.status(400).json(`Contraseña incorrecta.`);
@@ -40,6 +41,7 @@ router.post('/login', async (req, res) => {
       moment().format('YYYY-MM-D HH:mm:ss'),
     );
     if (!saveRefreshDB) res.status(400).json(saveRefreshDB);
+    console.log("Usuario logiando ...")
     res
       .status(201)
       .json({ accessToken: accessToken, refreshToken: refreshToken });
@@ -54,9 +56,13 @@ router.post('/register', async (req, res) => {
     username,
     password,
     repeat_password,
+    name,
+    lastname,
+    address,
     rol,
     contact_number,
     correo_electronico,
+    id_pais
   } = req.body;
   if (password !== repeat_password)
     return res.status(400).json('Contraseña no coinciden.');
@@ -76,8 +82,13 @@ router.post('/register', async (req, res) => {
       rol,
       contact_number,
       correo_electronico,
+      name,
+    lastname,
+      address,
+      id_pais
     );
     if (!query) return res.status(400).json(query);
+    console.log("registrando usuario ...")
     res.status(201).json('Usuario creado exitosamente.');
   } catch (err) {
     res.status(400).json(`error: ${err}`);
@@ -104,6 +115,7 @@ router.post('/token', async (req, res) => {
       moment().format('YYYY-MM-D HH:mm:ss'),
     );
     if (registerActivity) {
+      console.log("refrescando permisos...")
       res.json({ accessToken: accessToken });
     } else {
       res.json('server error');
@@ -128,20 +140,33 @@ router.post('/reset', async (req, res) => {
     const hashpass = bcrypt.hashSync(password, 10);
     const query = await resetUserPassword(username, hashpass);
     if (query) {
+      console.log("cambiando contraseña ... ")
       res.status(200).json('Contraseña cambiada con exito.');
     } else {
       res.status(400).json('error');
     }
   } catch (error) {
     res.status(400).json(error);
-  }
+  }   
 });
 
 router.delete('/logout', verify, async (req, res) => {
   const user_id = req.user.user_id;
   try {
     const query = await deleteRefreshToken(user_id);
+    console.log("deslogeando a usuario ...")
     res.status(200).json('refresh token deleted.');
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
+
+router.get('/user-data', verify, async (req, res) => {
+  const user_id = req.user.user_id;
+  try {
+    const query = await getUserData(user_id);
+    console.log("entregando data del usuario ...")
+    res.status(200).json(query);
   } catch (error) {
     res.status(400).json(error);
   }

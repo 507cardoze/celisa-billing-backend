@@ -17,9 +17,11 @@ const verifyRefreshToken = (refreshToken) => {
 
 const validateLoginInfo = async (username) => {
   return database
-    .select('*')
-    .from('usuarios')
-    .where('username', '=', username)
+    .select('a.*',"b.pais")
+    .from('usuarios as a')
+    .innerJoin("pais as b", "b.pais_id","a.id_pais")
+    .where('a.username', '=', username)
+    .andWhere("a.estado", "=", 1)
     .then((user) => {
       return user;
     })
@@ -34,6 +36,10 @@ const setNewUser = async (
   rol,
   contact_number,
   correo_electronico,
+  name,
+    lastname,
+  address,
+  id_pais
 ) => {
   return database('usuarios')
     .insert({
@@ -42,6 +48,11 @@ const setNewUser = async (
       rol: rol,
       contact_number: contact_number,
       correo_electronico: correo_electronico,
+      name,
+      lastname,
+      address,
+      id_pais,
+      estado: 0
     })
     .then((user) => {
       return user;
@@ -69,9 +80,11 @@ const saveRefreshToken = async (refreshToken, username, time) => {
 
 const verifyRefreshTokenDB = async (refreshToken) => {
   return database
-    .select('user_id', 'rol')
-    .from('usuarios')
-    .where('RT', '=', refreshToken)
+  .select('a.*',"b.pais")
+  .from('usuarios as a')
+  .innerJoin("pais as b", "b.pais_id","a.id_pais")
+    .where('a.RT', '=', refreshToken)
+    .andWhere("a.estado","=",1)
     .then((user) => {
       return user;
     })
@@ -80,7 +93,7 @@ const verifyRefreshTokenDB = async (refreshToken) => {
     });
 };
 
-const resetUserPassword = (username, password) => {
+const resetUserPassword = async (username, password) => {
   return database('usuarios')
     .where('username', '=', username)
     .update({
@@ -94,7 +107,7 @@ const resetUserPassword = (username, password) => {
     });
 };
 
-const deleteRefreshToken = (user_id) => {
+const deleteRefreshToken = async (user_id) => {
   return database('usuarios')
     .where('user_id', '=', user_id)
     .update({
@@ -122,6 +135,19 @@ const updateActivity = async (id_user, time) => {
     });
 };
 
+const getUserData = async (user_id) => {
+  return database
+  .select('a.*',"b.pais")
+  .from('usuarios as a')
+  .innerJoin("pais as b", "b.pais_id","a.id_pais")
+    .where('a.user_id', '=', user_id)
+    .then(user => {
+      return user;
+    }).catch(error => {
+      return error;
+  })
+}
+
 module.exports.generateAccessToken = generateAccessToken;
 module.exports.generateRefreshToken = generateRefreshToken;
 module.exports.generateAccessToken = generateAccessToken;
@@ -133,3 +159,4 @@ module.exports.verifyRefreshToken = verifyRefreshToken;
 module.exports.resetUserPassword = resetUserPassword;
 module.exports.deleteRefreshToken = deleteRefreshToken;
 module.exports.updateActivity = updateActivity;
+module.exports.getUserData = getUserData;
