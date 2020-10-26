@@ -93,9 +93,9 @@ const verifyRefreshTokenDB = async (refreshToken) => {
     });
 };
 
-const resetUserPassword = async (username, password) => {
+const resetUserPassword = async (user_id, password) => {
   return database('usuarios')
-    .where('username', '=', username)
+    .where('user_id', '=', user_id)
     .update({
       password: password,
     })

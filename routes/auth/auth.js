@@ -127,19 +127,10 @@ router.post('/token', async (req, res) => {
 });
 
 router.post('/reset',verify, async (req, res) => {
-  const { username, password, password_repeat } = req.body;
-  //   const { error } = resetValidation(req.body);
-  //   if (error) return res.status(400).json(error.details[0].message);
-  if (password !== password_repeat)
-    return res.status(400).json('Contraseña no coinciden.');
-
+  const { user_id, password } = req.body;
   try {
-    const userData = await validateLoginInfo(username);
-    if (!userData) return res.status(400).json(userData);
-    if (userData.length === 0)
-      return res.status(400).json(`Este usuario no esta registrado.`);
     const hashpass = bcrypt.hashSync(password, 10);
-    const query = await resetUserPassword(username, hashpass);
+    const query = await resetUserPassword(user_id, hashpass);
     if (query) {
       console.log("cambiando contraseña ... ")
       res.status(200).json('Contraseña cambiada con exito.');
@@ -158,6 +149,7 @@ router.delete('/logout', verify, async (req, res) => {
     console.log("deslogeando a usuario ...")
     res.status(200).json('refresh token deleted.');
   } catch (error) {
+    
     res.status(400).json(error);
   }
 });
