@@ -14,7 +14,10 @@ const {
   deleteRefreshToken,
   updateActivity,
   getUserData,
-  updateUserDetails
+  updateUserDetails,
+  getAllUsers,
+  getAllUsersWithPages,
+  paginateQueryResults
 } = require('./model.js');
 
 router.post('/login', async (req, res) => {
@@ -179,5 +182,33 @@ router.put('/update-data',verify, async (req, res) => {
     res.status(400).json(error);
   }   
 });
+
+router.get("/all-users", async (req, res) => {
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
+  const atrib = req.query.atrib;
+  const order = req.query.order;
+  try {
+    if (req.query.page === undefined && req.query.limit === undefined && req.query.atrib === undefined && req.query.order === undefined) {
+      const query = await getAllUsers();
+      res.status(200).json(query);
+    } else {
+      const query = await paginateQueryResults(
+        page,
+        limit,
+        atrib,
+        order,
+        getAllUsers,
+        getAllUsersWithPages,
+      );
+      res.status(200).json(query);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+
+
 
 module.exports = router;
