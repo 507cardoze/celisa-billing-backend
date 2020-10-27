@@ -121,20 +121,6 @@ const deleteRefreshToken = async (user_id) => {
     });
 };
 
-const updateActivity = async (id_user, time) => {
-  return database('usuarios')
-    .where('user_id', '=', id_user)
-    .update({
-      last_activity: time,
-    })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
-};
-
 const getUserData = async (user_id) => {
   return database
   .select('a.*',"b.pais")
@@ -218,6 +204,40 @@ const getAllUsersWithPages = async (offset, limit,atrib,order) => {
   })
 }
 
+const getUserBySearch = (text) => {
+  return database
+    .select("*")
+    .from("usuarios")
+    .where("name", "like", `%${text}%`)
+    .orWhere("lastname", "like", `%${text}%`)
+    .orWhere("contact_number", "like", `%${text}%`)
+    .orWhere("correo_electronico", "like", `%${text}%`)
+    .orWhere("address", "like", `%${text}%`)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+
+const updateUserEstado = async (user_id,estado) => {
+  return database('usuarios')
+    .where('user_id', '=', user_id)
+    .update({
+      estado:estado
+    })
+    .then((user) => {
+      return user;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+
+
 module.exports.generateAccessToken = generateAccessToken;
 module.exports.generateRefreshToken = generateRefreshToken;
 module.exports.generateAccessToken = generateAccessToken;
@@ -228,9 +248,10 @@ module.exports.verifyRefreshTokenDB = verifyRefreshTokenDB;
 module.exports.verifyRefreshToken = verifyRefreshToken;
 module.exports.resetUserPassword = resetUserPassword;
 module.exports.deleteRefreshToken = deleteRefreshToken;
-module.exports.updateActivity = updateActivity;
 module.exports.getUserData = getUserData;
 module.exports.updateUserDetails = updateUserDetails;
 module.exports.getAllUsers = getAllUsers;
 module.exports.getAllUsersWithPages = getAllUsersWithPages;
 module.exports.paginateQueryResults = paginateQueryResults;
+module.exports.getUserBySearch = getUserBySearch;
+module.exports.updateUserEstado = updateUserEstado;

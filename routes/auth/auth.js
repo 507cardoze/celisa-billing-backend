@@ -12,12 +12,13 @@ const {
   verifyRefreshToken,
   resetUserPassword,
   deleteRefreshToken,
-  updateActivity,
   getUserData,
   updateUserDetails,
   getAllUsers,
   getAllUsersWithPages,
-  paginateQueryResults
+  paginateQueryResults,
+  getUserBySearch,
+  updateUserEstado
 } = require('./model.js');
 
 router.post('/login', async (req, res) => {
@@ -114,16 +115,7 @@ router.post('/token', async (req, res) => {
       user_id: verifyRFT.user_id,
     };
     const accessToken = generateAccessToken(user);
-    const registerActivity = await updateActivity(
-      verifyRFT.user_id,
-      moment().format('YYYY-MM-D HH:mm:ss'),
-    );
-    if (registerActivity) {
-      console.log("refrescando permisos...")
-      res.json({ accessToken: accessToken });
-    } else {
-      res.json('server error');
-    }
+    res.json({ accessToken: accessToken });
   } catch (error) {
     res.status(400).json(error);
   }
@@ -183,7 +175,7 @@ router.put('/update-data',verify, async (req, res) => {
   }   
 });
 
-router.get("/all-users", async (req, res) => {
+router.get("/all-users",verify, async (req, res) => {
   const page = parseInt(req.query.page);
   const limit = parseInt(req.query.limit);
   const atrib = req.query.atrib;
@@ -203,6 +195,27 @@ router.get("/all-users", async (req, res) => {
       );
       res.status(200).json(query);
     }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+router.get("/search",verify, async (req, res) => {
+  const text = req.query.text;
+  try {
+    const query = await getUserBySearch(text)
+    res.status(200).json(query);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+router.get("/estado-update",verify, async (req, res) => {
+  const estado = req.query.estado;
+  const user_id = req.query.user_id;
+  try {
+    const query = await updateUserEstado(user_id,estado)
+    res.status(200).json(query);
   } catch (error) {
     res.status(500).json(error);
   }
