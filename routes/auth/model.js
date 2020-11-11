@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const { database } = require('../../database/database');
+const jwt = require("jsonwebtoken");
+const { database } = require("../../database/database");
 
 const generateAccessToken = (user) => {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
@@ -17,10 +17,10 @@ const verifyRefreshToken = (refreshToken) => {
 
 const validateLoginInfo = async (username) => {
   return database
-    .select('a.*',"b.pais")
-    .from('usuarios as a')
-    .innerJoin("pais as b", "b.pais_id","a.id_pais")
-    .where('a.username', '=', username)
+    .select("a.*", "b.pais")
+    .from("usuarios as a")
+    .innerJoin("pais as b", "b.pais_id", "a.id_pais")
+    .where("a.username", "=", username)
     .andWhere("a.estado", "=", 1)
     .then((user) => {
       return user;
@@ -37,11 +37,11 @@ const setNewUser = async (
   contact_number,
   correo_electronico,
   name,
-    lastname,
+  lastname,
   address,
-  id_pais
+  id_pais,
 ) => {
-  return database('usuarios')
+  return database("usuarios")
     .insert({
       username: username,
       password: hashpass,
@@ -52,7 +52,7 @@ const setNewUser = async (
       lastname,
       address,
       id_pais,
-      estado: 0
+      estado: 0,
     })
     .then((user) => {
       return user;
@@ -63,8 +63,8 @@ const setNewUser = async (
 };
 
 const saveRefreshToken = async (refreshToken, username, time) => {
-  return database('usuarios')
-    .where('username', '=', username)
+  return database("usuarios")
+    .where("username", "=", username)
     .update({
       RT: refreshToken,
       login_time: time,
@@ -80,11 +80,11 @@ const saveRefreshToken = async (refreshToken, username, time) => {
 
 const verifyRefreshTokenDB = async (refreshToken) => {
   return database
-  .select('a.*',"b.pais")
-  .from('usuarios as a')
-  .innerJoin("pais as b", "b.pais_id","a.id_pais")
-    .where('a.RT', '=', refreshToken)
-    .andWhere("a.estado","=",1)
+    .select("a.*", "b.pais")
+    .from("usuarios as a")
+    .innerJoin("pais as b", "b.pais_id", "a.id_pais")
+    .where("a.RT", "=", refreshToken)
+    .andWhere("a.estado", "=", 1)
     .then((user) => {
       return user;
     })
@@ -94,8 +94,8 @@ const verifyRefreshTokenDB = async (refreshToken) => {
 };
 
 const resetUserPassword = async (user_id, password) => {
-  return database('usuarios')
-    .where('user_id', '=', user_id)
+  return database("usuarios")
+    .where("user_id", "=", user_id)
     .update({
       password: password,
     })
@@ -108,8 +108,8 @@ const resetUserPassword = async (user_id, password) => {
 };
 
 const deleteRefreshToken = async (user_id) => {
-  return database('usuarios')
-    .where('user_id', '=', user_id)
+  return database("usuarios")
+    .where("user_id", "=", user_id)
     .update({
       RT: null,
     })
@@ -123,27 +123,38 @@ const deleteRefreshToken = async (user_id) => {
 
 const getUserData = async (user_id) => {
   return database
-  .select('a.*',"b.pais")
-  .from('usuarios as a')
-  .innerJoin("pais as b", "b.pais_id","a.id_pais")
-    .where('a.user_id', '=', user_id)
-    .then(user => {
+    .select("a.*", "b.pais")
+    .from("usuarios as a")
+    .innerJoin("pais as b", "b.pais_id", "a.id_pais")
+    .where("a.user_id", "=", user_id)
+    .then((user) => {
       return user;
-    }).catch(error => {
+    })
+    .catch((error) => {
       return error;
-  })
-}
+    });
+};
 
-const updateUserDetails = async (name, lastname, email, number, id_pais, address, user_id) => {
-  return database('usuarios')
-    .where('user_id', '=', user_id)
+const updateUserDetails = async (
+  name,
+  lastname,
+  email,
+  number,
+  id_pais,
+  address,
+  user_id,
+  rol,
+) => {
+  return database("usuarios")
+    .where("user_id", "=", user_id)
     .update({
       name: name,
       lastname: lastname,
       correo_electronico: email,
       contact_number: number,
       id_pais: id_pais,
-      address:address
+      address: address,
+      rol: rol,
     })
     .then((user) => {
       return user;
@@ -153,8 +164,14 @@ const updateUserDetails = async (name, lastname, email, number, id_pais, address
     });
 };
 
-const paginateQueryResults = async (page, limit,atrib,
-  order, getAll, getWithPages) => {
+const paginateQueryResults = async (
+  page,
+  limit,
+  atrib,
+  order,
+  getAll,
+  getWithPages,
+) => {
   const offset = limit * page - limit;
   const endIndex = page * limit;
   const results = {};
@@ -183,26 +200,28 @@ const getAllUsers = async () => {
   return database
     .select("*")
     .from("usuarios")
-    .then(users => {
-    return users;
-  }).catch(error => {
-    return error;
-  })
-}
+    .then((users) => {
+      return users;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
 
-const getAllUsersWithPages = async (offset, limit,atrib,order) => {
+const getAllUsersWithPages = async (offset, limit, atrib, order) => {
   return database
     .select("*")
     .from("usuarios")
     .limit(limit)
     .offset(offset)
-    .orderBy(`${atrib}`,`${order}`)
-    .then(users => {
-    return users;
-  }).catch(error => {
-    return error;
-  })
-}
+    .orderBy(`${atrib}`, `${order}`)
+    .then((users) => {
+      return users;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
 
 const getUserBySearch = (text) => {
   return database
@@ -221,12 +240,11 @@ const getUserBySearch = (text) => {
     });
 };
 
-
-const updateUserEstado = async (user_id,estado) => {
-  return database('usuarios')
-    .where('user_id', '=', user_id)
+const updateUserEstado = async (user_id, estado) => {
+  return database("usuarios")
+    .where("user_id", "=", user_id)
     .update({
-      estado:estado
+      estado: estado,
     })
     .then((user) => {
       return user;
@@ -235,8 +253,6 @@ const updateUserEstado = async (user_id,estado) => {
       return err;
     });
 };
-
-
 
 module.exports.generateAccessToken = generateAccessToken;
 module.exports.generateRefreshToken = generateRefreshToken;
