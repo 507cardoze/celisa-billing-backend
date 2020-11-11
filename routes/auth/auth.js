@@ -19,6 +19,7 @@ const {
   paginateQueryResults,
   getUserBySearch,
   updateUserEstado,
+  getUserDataExcel,
 } = require("./model.js");
 
 router.post("/login", async (req, res) => {
@@ -96,6 +97,7 @@ router.post("/register", async (req, res) => {
     console.log("registrando usuario ...");
     res.status(201).json("Usuario creado exitosamente.");
   } catch (err) {
+    console.log(err);
     res.status(400).json(`error: ${err}`);
   }
 });
@@ -198,28 +200,42 @@ router.get("/all-users", verify, async (req, res) => {
   const limit = parseInt(req.query.limit);
   const atrib = req.query.atrib;
   const order = req.query.order;
-  try {
-    if (
-      req.query.page === undefined &&
-      req.query.limit === undefined &&
-      req.query.atrib === undefined &&
-      req.query.order === undefined
-    ) {
-      const query = await getAllUsers();
+  const excel = req.query.excel;
+
+  if (excel) {
+    try {
+      const query = await getUserDataExcel();
+      console.log("data de usuarios para excel ...");
       res.status(200).json(query);
-    } else {
-      const query = await paginateQueryResults(
-        page,
-        limit,
-        atrib,
-        order,
-        getAllUsers,
-        getAllUsersWithPages,
-      );
-      res.status(200).json(query);
+    } catch (error) {
+      res.status(500).json(error);
     }
-  } catch (error) {
-    res.status(500).json(error);
+  } else {
+    try {
+      if (
+        req.query.page === undefined &&
+        req.query.limit === undefined &&
+        req.query.atrib === undefined &&
+        req.query.order === undefined
+      ) {
+        const query = await getAllUsers();
+        console.log("dataset de tabla de usuario completa ...");
+        res.status(200).json(query);
+      } else {
+        const query = await paginateQueryResults(
+          page,
+          limit,
+          atrib,
+          order,
+          getAllUsers,
+          getAllUsersWithPages,
+        );
+        console.log("entregando todos los usuarios ...");
+        res.status(200).json(query);
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
   }
 });
 
@@ -227,6 +243,7 @@ router.get("/search", verify, async (req, res) => {
   const text = req.query.text;
   try {
     const query = await getUserBySearch(text);
+    console.log("entregando todos los usuarios segun busqueda ...");
     res.status(200).json(query);
   } catch (error) {
     res.status(500).json(error);
@@ -234,11 +251,14 @@ router.get("/search", verify, async (req, res) => {
 });
 
 router.get("/estado-update", verify, async (req, res) => {
-  const estado = req.query.estado;
+  let estado = req.query.estado;
   const user_id = req.query.user_id;
+
   try {
-    const query = await updateUserEstado(user_id, estado);
-    res.status(200).json(query);
+    const query = await updateUserEstado(user_id, estado === "true" ? 1 : 0);
+    console.log(query);
+    console.log("moviendo el estado del usuario ...");
+    res.status(200).json("changed");
   } catch (error) {
     res.status(500).json(error);
   }

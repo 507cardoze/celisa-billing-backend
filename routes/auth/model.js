@@ -135,6 +135,28 @@ const getUserData = async (user_id) => {
     });
 };
 
+const getUserDataExcel = async () => {
+  return database
+    .select(
+      "a.username",
+      "a.rol",
+      "a.contact_number",
+      "a.correo_electronico",
+      "a.name",
+      "a.lastname",
+      "a.address",
+      "b.pais",
+    )
+    .from("usuarios as a")
+    .innerJoin("pais as b", "b.pais_id", "a.id_pais")
+    .then((user) => {
+      return user;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 const updateUserDetails = async (
   name,
   lastname,
@@ -271,3 +293,4 @@ module.exports.getAllUsersWithPages = getAllUsersWithPages;
 module.exports.paginateQueryResults = paginateQueryResults;
 module.exports.getUserBySearch = getUserBySearch;
 module.exports.updateUserEstado = updateUserEstado;
+module.exports.getUserDataExcel = getUserDataExcel;
