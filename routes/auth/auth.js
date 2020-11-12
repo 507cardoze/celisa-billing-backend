@@ -24,8 +24,6 @@ const {
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  //   const { error } = await loginValidation(req.body);
-  //   if (error) return res.status(400).json(error.details[0].message);
 
   try {
     const userData = await validateLoginInfo(username);
@@ -72,8 +70,6 @@ router.post("/register", async (req, res) => {
   } = req.body;
   if (password !== repeat_password)
     return res.status(400).json("Contraseña no coinciden.");
-  //   const { error } = await registerValidation(req.body);
-  //   if (error) return res.status(400).json(error.details[0].message);
   try {
     const userData = await validateLoginInfo(username);
     if (!userData) return res.status(400).json(userData);
@@ -172,7 +168,6 @@ router.put("/update-data", verify, async (req, res) => {
     user_id,
     rol,
   } = req.body;
-  console.log(req.body);
   try {
     const query = await updateUserDetails(
       name,
