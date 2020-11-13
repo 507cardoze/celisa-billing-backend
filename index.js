@@ -13,10 +13,12 @@ app.use(cors());
 const auth = require("./routes/auth/auth");
 const pais = require("./routes/pais/pais");
 const pedidos = require("./routes/pedidos/pedidos");
+const ordenes = require("./routes/ordenes/ordenes");
 // rutas
 app.use("/v1/auth", auth);
 app.use("/v1/pais", pais);
 app.use("/v1/pedidos", pedidos);
+app.use("/v1/ordenes", ordenes);
 
 app.listen(process.env.PORT, () =>
   console.log(`server running on localhost:${process.env.PORT}`),
