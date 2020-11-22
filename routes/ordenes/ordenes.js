@@ -18,6 +18,7 @@ router.get('/all-ordenes', verify, async (req, res) => {
 	const atrib = req.query.atrib;
 	const order = req.query.order;
 	const excel = req.query.excel;
+	const estado = parseInt(req.query.estado);
 
 	if (excel) {
 		try {
@@ -33,7 +34,8 @@ router.get('/all-ordenes', verify, async (req, res) => {
 				req.query.page === undefined &&
 				req.query.limit === undefined &&
 				req.query.atrib === undefined &&
-				req.query.order === undefined
+				req.query.order === undefined &&
+				req.query.estado === undefined
 			) {
 				const query = await getAllOrdenes();
 				console.log('dataset de tabla de ordenes completa ...');
@@ -46,6 +48,7 @@ router.get('/all-ordenes', verify, async (req, res) => {
 					order,
 					getAllOrdenes,
 					getAllOrdenesWithPages,
+					estado,
 				);
 				console.log('entregando todos los ordenes ...');
 				res.status(200).json(query);

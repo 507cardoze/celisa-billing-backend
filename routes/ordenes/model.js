@@ -1,28 +1,62 @@
 const { database } = require('../../database/database');
 
-const getAllOrdenes = async () => {
+const getAllOrdenes = async (estado = 0) => {
 	return database
-		.select('a.*', 'b.name as nombre', 'b.lastname as apellido')
+		.select(
+			'a.*',
+			'b.name as nombre',
+			'b.lastname as apellido',
+			'c.nombre_status',
+		)
 		.from('ordenes as a')
 		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
+		.innerJoin('status as c', 'a.estado', 'c.status_id')
 		.then((orden) => {
-			return orden;
+			if (estado !== 0) {
+				if (orden.length > 0) {
+					return orden.filter((ord) => ord.estado === estado);
+				} else {
+					return orden;
+				}
+			} else {
+				return orden;
+			}
 		})
 		.catch((error) => {
 			return error;
 		});
 };
 
-const getAllOrdenesWithPages = async (offset, limit, atrib, order) => {
+const getAllOrdenesWithPages = async (
+	offset,
+	limit,
+	atrib,
+	order,
+	estado = 0,
+) => {
 	return database
-		.select('a.*', 'b.name as nombre', 'b.lastname as apellido')
+		.select(
+			'a.*',
+			'b.name as nombre',
+			'b.lastname as apellido',
+			'c.nombre_status',
+		)
 		.from('ordenes as a')
 		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
+		.innerJoin('status as c', 'a.estado', 'c.status_id')
 		.limit(limit)
 		.offset(offset)
 		.orderBy(`${atrib}`, `${order}`)
 		.then((orden) => {
-			return orden;
+			if (estado !== 0) {
+				if (orden.length > 0) {
+					return orden.filter((ord) => ord.estado === estado);
+				} else {
+					return orden;
+				}
+			} else {
+				return orden;
+			}
 		})
 		.catch((error) => {
 			return error;
@@ -31,15 +65,25 @@ const getAllOrdenesWithPages = async (offset, limit, atrib, order) => {
 
 const getOrdenesDataExcel = async () => {
 	return database
-		.select('a.*', 'b.name as nombre', 'b.lastname as apellido')
+		.select(
+			'a.*',
+			'b.name as nombre',
+			'b.lastname as apellido',
+			'c.nombre_status as estado de la orden',
+		)
 		.from('ordenes as a')
 		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
+		.innerJoin('status as c', 'a.estado', 'c.status_id')
 		.then((orden) => {
 			return orden;
 		})
 		.catch((error) => {
 			return error;
 		});
+};
+
+const getOrdersByEstado = (array, estado) => {
+	return array.filter((orden) => orden.estado === estado).length;
 };
 
 const paginateQueryResults = async (
@@ -49,11 +93,22 @@ const paginateQueryResults = async (
 	order,
 	getAll,
 	getWithPages,
+	estado,
 ) => {
 	const offset = limit * page - limit;
 	const endIndex = page * limit;
 	const results = {};
-	const total = await getAll();
+	const total = await getAll(estado);
+	const definitivo_total = await getAll();
+	results.dashboard = {
+		total: definitivo_total.length,
+		pendiente: getOrdersByEstado(definitivo_total, 1),
+		aprobadas: getOrdersByEstado(definitivo_total, 2),
+		llego: getOrdersByEstado(definitivo_total, 3),
+		saldo_pendiente: getOrdersByEstado(definitivo_total, 4),
+		completadas: getOrdersByEstado(definitivo_total, 5),
+		canceladas: getOrdersByEstado(definitivo_total, 6),
+	};
 	results.total = total.length;
 
 	if (endIndex < total.length) {
@@ -70,7 +125,7 @@ const paginateQueryResults = async (
 		};
 	}
 
-	results.results = await getWithPages(offset, limit, atrib, order);
+	results.results = await getWithPages(offset, limit, atrib, order, estado);
 	return results;
 };
 
