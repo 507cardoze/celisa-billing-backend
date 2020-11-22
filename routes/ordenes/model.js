@@ -158,6 +158,7 @@ const crearOrden = async (obj, id_user, fecha) => {
 			direccion_cliente: obj.direccion_cliente,
 			numero_cliente: obj.numero_cliente,
 			estatus: 1,
+			estado: 1,
 		})
 		.then((orden) => {
 			return orden;
