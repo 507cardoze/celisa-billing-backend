@@ -27,6 +27,34 @@ const getAllOrdenes = async (estado = 0) => {
 		});
 };
 
+const getAllMyOrdenes = async (estado = 0, id_user) => {
+	return database
+		.select(
+			'a.*',
+			'b.name as nombre',
+			'b.lastname as apellido',
+			'c.nombre_status',
+		)
+		.from('ordenes as a')
+		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
+		.innerJoin('status as c', 'a.estado', 'c.status_id')
+		.where('a.id_user', '=', id_user)
+		.then((orden) => {
+			if (estado !== 0) {
+				if (orden.length > 0) {
+					return orden.filter((ord) => ord.estado === estado);
+				} else {
+					return orden;
+				}
+			} else {
+				return orden;
+			}
+		})
+		.catch((error) => {
+			return error;
+		});
+};
+
 const getAllOrdenesWithPages = async (
 	offset,
 	limit,
@@ -44,6 +72,45 @@ const getAllOrdenesWithPages = async (
 		.from('ordenes as a')
 		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
 		.innerJoin('status as c', 'a.estado', 'c.status_id')
+
+		.limit(limit)
+		.offset(offset)
+		.orderBy(`${atrib}`, `${order}`)
+		.then((orden) => {
+			if (estado !== 0) {
+				if (orden.length > 0) {
+					return orden.filter((ord) => ord.estado === estado);
+				} else {
+					return orden;
+				}
+			} else {
+				return orden;
+			}
+		})
+		.catch((error) => {
+			return error;
+		});
+};
+
+const getAllMyOrdenesWithPages = async (
+	offset,
+	limit,
+	atrib,
+	order,
+	estado = 0,
+	id_user,
+) => {
+	return database
+		.select(
+			'a.*',
+			'b.name as nombre',
+			'b.lastname as apellido',
+			'c.nombre_status',
+		)
+		.from('ordenes as a')
+		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
+		.innerJoin('status as c', 'a.estado', 'c.status_id')
+		.where('a.id_user', '=', id_user)
 		.limit(limit)
 		.offset(offset)
 		.orderBy(`${atrib}`, `${order}`)
@@ -129,6 +196,57 @@ const paginateQueryResults = async (
 	return results;
 };
 
+const paginateQueryMyResults = async (
+	page,
+	limit,
+	atrib,
+	order,
+	getAll,
+	getWithPages,
+	estado,
+	id_user,
+) => {
+	const offset = limit * page - limit;
+	const endIndex = page * limit;
+	const results = {};
+	const total = await getAll(estado, id_user);
+	const definitivo_total = await getAll(estado, id_user);
+	results.dashboard = {
+		total: definitivo_total.length,
+		pendiente: getOrdersByEstado(definitivo_total, 1),
+		aprobadas: getOrdersByEstado(definitivo_total, 2),
+		llego: getOrdersByEstado(definitivo_total, 3),
+		saldo_pendiente: getOrdersByEstado(definitivo_total, 4),
+		completadas: getOrdersByEstado(definitivo_total, 5),
+		canceladas: getOrdersByEstado(definitivo_total, 6),
+	};
+	results.total = total.length;
+
+	if (endIndex < total.length) {
+		results.next = {
+			page: page + 1,
+			limit: limit,
+		};
+	}
+
+	if (page > 1) {
+		results.previous = {
+			page: page,
+			limit: limit,
+		};
+	}
+
+	results.results = await getWithPages(
+		offset,
+		limit,
+		atrib,
+		order,
+		estado,
+		id_user,
+	);
+	return results;
+};
+
 const getOrdenesBySearch = async (text) => {
 	return database
 		.select('a.*', 'b.name as nombre', 'b.lastname as apellido')
@@ -206,3 +324,6 @@ module.exports.getOrdenesBySearch = getOrdenesBySearch;
 module.exports.paginateQueryResults = paginateQueryResults;
 module.exports.crearOrden = crearOrden;
 module.exports.crearProducto = crearProducto;
+module.exports.getAllMyOrdenes = getAllMyOrdenes;
+module.exports.getAllMyOrdenesWithPages = getAllMyOrdenesWithPages;
+module.exports.paginateQueryMyResults = paginateQueryMyResults;

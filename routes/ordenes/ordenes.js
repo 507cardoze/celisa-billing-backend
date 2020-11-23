@@ -10,6 +10,9 @@ const {
 	getOrdenesBySearch,
 	crearOrden,
 	crearProducto,
+	getAllMyOrdenes,
+	getAllMyOrdenesWithPages,
+	paginateQueryMyResults,
 } = require('./model.js');
 
 router.get('/all-ordenes', verify, async (req, res) => {
@@ -59,14 +62,63 @@ router.get('/all-ordenes', verify, async (req, res) => {
 	}
 });
 
+// my orders
+
+router.get('/my-ordenes', verify, async (req, res) => {
+	const page = parseInt(req.query.page);
+	const limit = parseInt(req.query.limit);
+	const atrib = req.query.atrib;
+	const order = req.query.order;
+	const estado = parseInt(req.query.estado);
+	const user_id = req.user.user_id;
+
+	try {
+		if (
+			req.query.page === undefined &&
+			req.query.limit === undefined &&
+			req.query.atrib === undefined &&
+			req.query.order === undefined &&
+			req.query.estado === undefined
+		) {
+			const query = await getAllMyOrdenes(0, user_id);
+			console.log('dataset de tabla de ordenes completa ...');
+			res.status(200).json(query);
+		} else {
+			const query = await paginateQueryMyResults(
+				page,
+				limit,
+				atrib,
+				order,
+				getAllMyOrdenes,
+				getAllMyOrdenesWithPages,
+				estado,
+				user_id,
+			);
+			console.log('entregando todos los ordenes ...');
+			res.status(200).json(query);
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json(error);
+	}
+});
+
 // search
 
 router.get('/search', verify, async (req, res) => {
 	const text = req.query.text;
+	const privado = req.query.privado;
+	const user_id = req.user.user_id;
 	try {
-		const query = await getOrdenesBySearch(text);
-		console.log('entregando todas las ordenes segun busqueda ...');
-		res.status(200).json(query);
+		if (privado === undefined) {
+			const query = await getOrdenesBySearch(text);
+			console.log('entregando todas las ordenes segun busqueda ...');
+			res.status(200).json(query);
+		} else {
+			const query = await getOrdenesBySearch(text);
+			console.log('entregando todas las ordenes segun busqueda ...');
+			res.status(200).json(query.filter((orden) => orden.id_user === user_id));
+		}
 	} catch (error) {
 		res.status(500).json(error);
 	}
