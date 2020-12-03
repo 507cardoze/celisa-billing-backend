@@ -375,6 +375,7 @@ const getAllPagosByOrdenId = async (id_orden) => {
     .from("linea_pago")
     .where("orden_id", "=", id_orden)
     .andWhere("estatus", "=", 1)
+    .orderBy("pago_id", "desc")
     .then((orden) => {
       return orden;
     })
