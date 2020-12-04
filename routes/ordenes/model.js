@@ -214,7 +214,7 @@ const paginateQueryMyResults = async (
   const endIndex = page * limit;
   const results = {};
   const total = await getAll(estado, id_user);
-  const definitivo_total = await getAll(estado, id_user);
+  const definitivo_total = await getAll(0, id_user);
   results.dashboard = {
     total: definitivo_total.length,
     pendiente: getOrdersByEstado(definitivo_total, 1),
