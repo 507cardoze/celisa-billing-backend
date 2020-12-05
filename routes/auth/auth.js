@@ -99,6 +99,7 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/token', async (req, res) => {
+	console.log('refrescando token .......');
 	const refreshToken = req.body.token;
 	if (refreshToken == null) return res.status(401).json('No esta autorizado');
 
@@ -112,8 +113,9 @@ router.post('/token', async (req, res) => {
 		let user = {
 			user_id: verifyRFT.user_id,
 		};
-		console.log('usando refresh token para adquirir nuevo token');
+
 		const accessToken = generateAccessToken(user);
+		console.log('usando refresh token para adquirir nuevo token');
 		res.json({ accessToken: accessToken });
 	} catch (error) {
 		res.status(400).json(error);
