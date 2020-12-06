@@ -387,6 +387,69 @@ const getAllPagosByOrdenId = async (id_orden) => {
 		});
 };
 
+const updateOrderDetails = async (
+	id_orden,
+	nombre_cliente,
+	numero_cliente,
+	direccion_cliente,
+) => {
+	return database('ordenes')
+		.where('orden_id', '=', id_orden)
+		.update({
+			nombre_cliente: nombre_cliente,
+			numero_cliente: numero_cliente,
+			direccion_cliente: direccion_cliente,
+		})
+		.then((orden) => {
+			return orden;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+const updateProductoEstatus = async (linea_id, estatus) => {
+	return database('linea_compra')
+		.where('linea_id', '=', linea_id)
+		.update({
+			estatus: estatus,
+		})
+		.then((producto) => {
+			return producto;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+const addCantidadProductos = async (linea_id, cantidad) => {
+	return database('linea_compra')
+		.where('linea_id', '=', linea_id)
+		.update({
+			cantidad: cantidad + 1,
+		})
+		.then((producto) => {
+			return producto;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+const restarCantidadProductos = async (linea_id, cantidad) => {
+	return database('linea_compra')
+		.where('linea_id', '=', linea_id)
+		.update({
+			cantidad: cantidad - 1,
+		})
+		.then((producto) => {
+			return producto;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
 module.exports.getAllOrdenes = getAllOrdenes;
 module.exports.getAllOrdenesWithPages = getAllOrdenesWithPages;
 module.exports.getOrdenesDataExcel = getOrdenesDataExcel;
@@ -400,3 +463,7 @@ module.exports.paginateQueryMyResults = paginateQueryMyResults;
 module.exports.getOrdenDetailById = getOrdenDetailById;
 module.exports.getAllProductosByOrdenId = getAllProductosByOrdenId;
 module.exports.getAllPagosByOrdenId = getAllPagosByOrdenId;
+module.exports.updateOrderDetails = updateOrderDetails;
+module.exports.updateProductoEstatus = updateProductoEstatus;
+module.exports.addCantidadProductos = addCantidadProductos;
+module.exports.restarCantidadProductos = restarCantidadProductos;
