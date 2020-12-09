@@ -380,4 +380,14 @@ router.put('/update-estado', verify, async (req, res) => {
 	}
 });
 
+router.post('/agregar-pago', async (req, res) => {
+	// if (req.files === null) return res.status(400).json('El archivo no subio.');
+
+	console.log(req.body);
+
+	// const file = req.files.file;
+
+	// console.log(file);
+});
+
 module.exports = router;
