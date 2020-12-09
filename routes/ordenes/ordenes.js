@@ -20,6 +20,8 @@ const {
 	updateProductoEstatus,
 	addCantidadProductos,
 	restarCantidadProductos,
+	updateProveedorToProducto,
+	updateOrdenEstado,
 } = require('./model.js');
 
 router.get('/all-ordenes', verify, async (req, res) => {
@@ -190,6 +192,7 @@ router.get('/get-orden-details/:id_orden', verify, async (req, res) => {
 		direccion_cliente: '',
 		fecha_creacion: '',
 		estado: '',
+		estado_id: '',
 		productos: [],
 		pagos: [],
 	};
@@ -212,6 +215,7 @@ router.get('/get-orden-details/:id_orden', verify, async (req, res) => {
 		orden.direccion_cliente = ordenDetail[0].direccion_cliente;
 		orden.fecha_creacion = ordenDetail[0].fecha;
 		orden.estado = ordenDetail[0].nombre_status;
+		orden.estado_id = ordenDetail[0].estado_id;
 
 		const allProductos = await getAllProductosByOrdenId(id_orden);
 		orden.productos = allProductos;
@@ -239,8 +243,13 @@ router.put('/update-order-details', verify, async (req, res) => {
 			numero_cliente,
 			direccion_cliente,
 		);
-		console.log(`Actualizando detalles de orden: ${id_orden}`);
-		res.status(200).json('Detalles Actualizados.');
+		if (query) {
+			console.log(`Actualizando detalles de orden: ${id_orden}`);
+			res.status(200).json('Detalles Actualizados.');
+		} else {
+			console.log(query);
+			res.status(400).json('error al actualizar detalle de orden');
+		}
 	} catch (error) {
 		console.log(error);
 		res.status(500).json(error);
@@ -326,6 +335,44 @@ router.put('/update-cantidad', verify, async (req, res) => {
 				console.log(query);
 				res.status(400).json('error al restando producto.');
 			}
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json(error);
+	}
+});
+
+router.put('/update-proveedor', verify, async (req, res) => {
+	const linea_id = req.body.linea_id;
+	const proveedor_id = req.body.proveedor_id;
+
+	try {
+		const query = await updateProveedorToProducto(linea_id, proveedor_id);
+		if (query) {
+			console.log(`actualizando de proveedor a producto: ${linea_id}`);
+			res.status(200).json('Detalles Actualizados.');
+		} else {
+			console.log(query);
+			res.status(400).json('error al eliminar producto.');
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json(error);
+	}
+});
+
+router.put('/update-estado', verify, async (req, res) => {
+	const id_orden = req.body.id_orden;
+	const estado_id = req.body.estado_id;
+
+	try {
+		const query = await updateOrdenEstado(id_orden, estado_id);
+		if (query) {
+			console.log(`actualizando de estado a orden: ${id_orden}`);
+			res.status(200).json('Detalles Actualizados.');
+		} else {
+			console.log(query);
+			res.status(400).json('error al actualizar orden.');
 		}
 	} catch (error) {
 		console.log(error);

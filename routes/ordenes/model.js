@@ -331,6 +331,7 @@ const getOrdenDetailById = async (id_orden) => {
 			'b.contact_number',
 			'b.address',
 			'c.nombre_status',
+			'a.estado as estado_id',
 		)
 		.from('ordenes as a')
 		.innerJoin('usuarios as b', 'a.id_user', 'b.user_id')
@@ -422,6 +423,20 @@ const updateProductoEstatus = async (linea_id, estatus) => {
 		});
 };
 
+const updateProveedorToProducto = async (linea_id, proveedor_id) => {
+	return database('linea_compra')
+		.where('linea_id', '=', linea_id)
+		.update({
+			proveedor_id: proveedor_id,
+		})
+		.then((producto) => {
+			return producto;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
 const addCantidadProductos = async (linea_id, cantidad) => {
 	return database('linea_compra')
 		.where('linea_id', '=', linea_id)
@@ -450,6 +465,20 @@ const restarCantidadProductos = async (linea_id, cantidad) => {
 		});
 };
 
+const updateOrdenEstado = async (id_orden, estado) => {
+	return database('ordenes')
+		.where('orden_id', '=', id_orden)
+		.update({
+			estado: estado,
+		})
+		.then((orden) => {
+			return orden;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
 module.exports.getAllOrdenes = getAllOrdenes;
 module.exports.getAllOrdenesWithPages = getAllOrdenesWithPages;
 module.exports.getOrdenesDataExcel = getOrdenesDataExcel;
@@ -467,3 +496,5 @@ module.exports.updateOrderDetails = updateOrderDetails;
 module.exports.updateProductoEstatus = updateProductoEstatus;
 module.exports.addCantidadProductos = addCantidadProductos;
 module.exports.restarCantidadProductos = restarCantidadProductos;
+module.exports.updateProveedorToProducto = updateProveedorToProducto;
+module.exports.updateOrdenEstado = updateOrdenEstado;
