@@ -508,6 +508,20 @@ const addPago = async (
 		});
 };
 
+const updatePagoEstatus = async (pago_id, estatus) => {
+	return database('linea_pago')
+		.where('pago_id', '=', pago_id)
+		.update({
+			estatus: estatus,
+		})
+		.then((pago) => {
+			return pago;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
 module.exports.getAllOrdenes = getAllOrdenes;
 module.exports.getAllOrdenesWithPages = getAllOrdenesWithPages;
 module.exports.getOrdenesDataExcel = getOrdenesDataExcel;
@@ -528,3 +542,4 @@ module.exports.restarCantidadProductos = restarCantidadProductos;
 module.exports.updateProveedorToProducto = updateProveedorToProducto;
 module.exports.updateOrdenEstado = updateOrdenEstado;
 module.exports.addPago = addPago;
+module.exports.updatePagoEstatus = updatePagoEstatus;

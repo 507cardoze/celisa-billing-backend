@@ -23,6 +23,7 @@ const {
 	updateProveedorToProducto,
 	updateOrdenEstado,
 	addPago,
+	updatePagoEstatus,
 } = require('./model.js');
 
 router.get('/all-ordenes', verify, async (req, res) => {
@@ -412,6 +413,25 @@ router.post('/agregar-pago', verify, async (req, res) => {
 			res.status(200).json('Pago realizado.');
 		} else {
 			res.status(400).json('error al agregar pago.');
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json(error);
+	}
+});
+
+router.put('/delete-pago', verify, async (req, res) => {
+	const pago_id = req.body.pago_id;
+	const estatus = 0;
+
+	try {
+		const query = await updatePagoEstatus(pago_id, estatus);
+		if (query) {
+			console.log(`Eliminando pago: ${pago_id}`);
+			res.status(200).json('Detalles Actualizados.');
+		} else {
+			console.log(query);
+			res.status(400).json('error al eliminar pago.');
 		}
 	} catch (error) {
 		console.log(error);
