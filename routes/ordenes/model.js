@@ -479,6 +479,35 @@ const updateOrdenEstado = async (id_orden, estado) => {
 		});
 };
 
+const addPago = async (
+	pedido_id,
+	fecha_pago,
+	cantidad,
+	estatus,
+	tipo_id,
+	orden_id,
+	id_user,
+	adjunto,
+) => {
+	return database('linea_pago')
+		.insert({
+			pedido_id: pedido_id,
+			fecha_pago: fecha_pago,
+			cantidad: cantidad,
+			tipo_id: tipo_id,
+			id_user: id_user,
+			estatus: estatus,
+			orden_id: orden_id,
+			adjunto: adjunto,
+		})
+		.then((pago) => {
+			return pago;
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
 module.exports.getAllOrdenes = getAllOrdenes;
 module.exports.getAllOrdenesWithPages = getAllOrdenesWithPages;
 module.exports.getOrdenesDataExcel = getOrdenesDataExcel;
@@ -498,3 +527,4 @@ module.exports.addCantidadProductos = addCantidadProductos;
 module.exports.restarCantidadProductos = restarCantidadProductos;
 module.exports.updateProveedorToProducto = updateProveedorToProducto;
 module.exports.updateOrdenEstado = updateOrdenEstado;
+module.exports.addPago = addPago;

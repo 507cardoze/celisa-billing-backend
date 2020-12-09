@@ -22,6 +22,7 @@ const {
 	restarCantidadProductos,
 	updateProveedorToProducto,
 	updateOrdenEstado,
+	addPago,
 } = require('./model.js');
 
 router.get('/all-ordenes', verify, async (req, res) => {
@@ -380,14 +381,42 @@ router.put('/update-estado', verify, async (req, res) => {
 	}
 });
 
-router.post('/agregar-pago', async (req, res) => {
-	// if (req.files === null) return res.status(400).json('El archivo no subio.');
+router.post('/agregar-pago', verify, async (req, res) => {
+	const id_orden = req.body.id_orden;
+	const id_pedido = req.body.id_pedido;
+	const id_tipo = req.body.id_tipo;
+	const adjunto = req.body.adjunto;
+	const cantidad = req.body.cantidad;
+	const user_id = req.user.user_id;
+	const fecha_pago = moment().format('YYYY-MM-DD');
+	const estatus = 1;
 
-	console.log(req.body);
+	if (id_tipo !== 1 && adjunto === null)
+		return res
+			.status(400)
+			.json('Todo pago que no sea al contado debe tener su adjunto.');
 
-	// const file = req.files.file;
-
-	// console.log(file);
+	try {
+		const query = await addPago(
+			id_pedido,
+			fecha_pago,
+			cantidad,
+			estatus,
+			id_tipo,
+			id_orden,
+			user_id,
+			adjunto,
+		);
+		if (query) {
+			console.log(`agregando pago a la orden: ${id_orden}`);
+			res.status(200).json('Pago realizado.');
+		} else {
+			res.status(400).json('error al agregar pago.');
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json(error);
+	}
 });
 
 module.exports = router;
