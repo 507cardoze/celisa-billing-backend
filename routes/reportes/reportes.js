@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
-  const fecha = moment().format("DD-MM-YYYY hh:mm a");
+  const fecha = moment().locale("es").format("DD-MM-YYYY hh:mm a");
   const reporte = {
     desde,
     hasta,
@@ -35,14 +35,14 @@ router.get("/", async (req, res) => {
 
     reporte.por_fecha = await getVentasPorFecha(desde, hasta);
     reporte.por_fecha.map((obj) => {
-      obj.fecha = moment(obj.fecha).format("DD-MMM-YYYY");
+      obj.fecha = moment(obj.fecha).locale("es").format("DD-MMM-YYYY");
       return obj;
     });
 
     reporte.productosVendidos = await getProductosPorFecha(desde, hasta);
 
     reporte.desglose = ordenesFiltradas.map((obj) => {
-      obj.fecha = moment(obj.fecha).format("DD-MMM-YYYY");
+      obj.fecha = moment(obj.fecha).locale("es").format("DD-MMM-YYYY");
       return obj;
     });
 
@@ -57,7 +57,7 @@ router.get("/ranking-proveedores", async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
-  const fecha = moment().format("DD-MM-YYYY hh:mm a");
+  const fecha = moment().locale("es").format("DD-MM-YYYY hh:mm a");
   const reporte = {
     desde,
     hasta,
@@ -88,7 +88,7 @@ router.get("/ranking-vendedores", async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
-  const fecha = moment().format("DD-MM-YYYY hh:mm a");
+  const fecha = moment().locale("es").format("DD-MM-YYYY hh:mm a");
   const reporte = {
     desde,
     hasta,
