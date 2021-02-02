@@ -17,6 +17,7 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       "a.orden_id",
       "a.nombre_cliente",
       "a.direccion_cliente as direccion",
+      "a.fecha",
       database.raw(`CONCAT(d.name,' ', d.lastname) as vendedor`),
       database.raw(`SUM(ventas.ventas)  AS ventas`),
       database.raw(`IFNULL(ROUND(pago.pagos,2),0) as pagos`),
@@ -184,6 +185,65 @@ const getAllVendedoresConVentasTotal = async () => {
     });
 };
 
+const getVentasPorFecha = async (desde, hasta) => {
+  return database
+    .select("a.fecha", database.raw(`SUM(ventas.ventas)  AS ventas`))
+    .from("ordenes AS a")
+    .leftJoin(
+      database
+        .select(
+          "orden_id",
+          database.raw(`ROUND(SUM(cantidad * precio),2) as ventas`),
+        )
+        .from("linea_compra")
+        .where("estatus", "=", 1)
+        .groupBy("orden_id")
+        .as("ventas"),
+      "ventas.orden_id",
+      "a.orden_id",
+    )
+    .where("a.estatus", "=", 1)
+    .whereBetween("a.fecha", [desde, hasta])
+    .groupBy("a.fecha")
+    .orderBy("a.fecha", "DESC")
+    .then((ordenes) => {
+      return ordenes;
+    })
+    .catch((error) => {
+      console.error(error);
+      return error;
+    });
+};
+
+const getProductosPorFecha = async (desde, hasta) => {
+  return database
+    .select(
+      "a.producto",
+      "a.orden_id",
+      "a.precio",
+      "a.talla",
+      "a.color",
+      "a.cantidad",
+      "b.fecha",
+      database.raw(`CONCAT(c.name,' ', c.lastname) as vendedor`),
+    )
+    .from("linea_compra as a")
+    .innerJoin("ordenes as b", "b.orden_id", "a.orden_id")
+    .innerJoin("usuarios as c", "c.user_id", "b.id_user")
+    .whereBetween("b.fecha", [desde, hasta])
+    .where("a.estatus", "=", 1)
+    .andWhere("b.estatus", "=", 1)
+    .orderBy("b.fecha", "DESC")
+    .limit(25)
+    .then((ordenes) => {
+      return ordenes;
+    })
+    .catch((error) => {
+      console.error(error);
+      return error;
+    });
+};
+
 module.exports.getAllOrdenesByFechaWithCompra = getAllOrdenesByFechaWithCompra;
 module.exports.sumar = sumar;
 module.exports.getAllProveedoresVentas = getAllProveedoresVentas;
@@ -191,3 +251,5 @@ module.exports.getAllProveedoresVentasTotal = getAllProveedoresVentasTotal;
 module.exports.getAllProductosSinProveedor = getAllProductosSinProveedor;
 module.exports.getAllVendedoresConVentas = getAllVendedoresConVentas;
 module.exports.getAllVendedoresConVentasTotal = getAllVendedoresConVentasTotal;
+module.exports.getVentasPorFecha = getVentasPorFecha;
+module.exports.getProductosPorFecha = getProductosPorFecha;

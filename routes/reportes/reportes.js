@@ -10,11 +10,14 @@ const {
   getAllProductosSinProveedor,
   getAllVendedoresConVentas,
   getAllVendedoresConVentasTotal,
+  getVentasPorFecha,
+  getProductosPorFecha,
 } = require("./model");
 
 const { getAllProveedores } = require("../proveedores/model");
 
 router.get("/", async (req, res) => {
+  if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
   const fecha = moment().format("DD-MM-YYYY hh:mm a");
@@ -29,7 +32,19 @@ router.get("/", async (req, res) => {
     reporte.ventasTotales = sumar(ordenesFiltradas, "ventas");
     reporte.pagosTotales = sumar(ordenesFiltradas, "pagos");
     reporte.saldosTotales = sumar(ordenesFiltradas, "saldo");
-    reporte.desglose = ordenesFiltradas;
+
+    reporte.por_fecha = await getVentasPorFecha(desde, hasta);
+    reporte.por_fecha.map((obj) => {
+      obj.fecha = moment(obj.fecha).format("DD-MM-YYYY");
+      return obj;
+    });
+
+    reporte.productosVendidos = await getProductosPorFecha(desde, hasta);
+
+    reporte.desglose = ordenesFiltradas.map((obj) => {
+      obj.fecha = moment(obj.fecha).format("DD-MM-YYYY");
+      return obj;
+    });
 
     res.status(200).json(reporte);
   } catch (error) {
@@ -39,6 +54,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/ranking-proveedores", async (req, res) => {
+  if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
   const fecha = moment().format("DD-MM-YYYY hh:mm a");
@@ -69,6 +85,7 @@ router.get("/ranking-proveedores", async (req, res) => {
 });
 
 router.get("/ranking-vendedores", async (req, res) => {
+  if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
   const fecha = moment().format("DD-MM-YYYY hh:mm a");
