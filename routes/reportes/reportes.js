@@ -41,6 +41,11 @@ router.get("/", async (req, res) => {
 
     reporte.productosVendidos = await getProductosPorFecha(desde, hasta);
 
+    reporte.productosVendidos.map((obj) => {
+      obj.fecha = moment(obj.fecha).locale("es").format("DD-MMM-YYYY");
+      return obj;
+    });
+
     reporte.desglose = ordenesFiltradas.map((obj) => {
       obj.fecha = moment(obj.fecha).locale("es").format("DD-MMM-YYYY");
       return obj;

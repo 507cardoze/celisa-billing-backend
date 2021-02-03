@@ -254,6 +254,7 @@ const getVentasPorFecha = async (desde, hasta) => {
 const getProductosPorFecha = async (desde, hasta) => {
   return database
     .select(
+      "a.linea_id",
       "a.producto",
       "a.orden_id",
       "a.precio",
@@ -270,7 +271,6 @@ const getProductosPorFecha = async (desde, hasta) => {
     .where("a.estatus", "=", 1)
     .andWhere("b.estatus", "=", 1)
     .orderBy("b.fecha", "DESC")
-    .limit(25)
     .then((ordenes) => {
       return ordenes;
     })
