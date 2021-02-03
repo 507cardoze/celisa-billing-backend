@@ -18,6 +18,8 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       "a.nombre_cliente",
       "a.direccion_cliente as direccion",
       "a.fecha",
+      "a.estado",
+      "e.nombre_status",
       database.raw(`CONCAT(d.name,' ', d.lastname) as vendedor`),
       database.raw(`SUM(ventas.ventas)  AS ventas`),
       database.raw(`IFNULL(ROUND(pago.pagos,2),0) as pagos`),
@@ -50,6 +52,7 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       "a.orden_id",
     )
     .innerJoin("usuarios as d", "a.id_user", "d.user_id")
+    .innerJoin("status as e", "a.estado", "e.status_id")
     .where("a.estatus", "=", 1)
     .whereBetween("a.fecha", [desde, hasta])
     .groupBy("a.orden_id")

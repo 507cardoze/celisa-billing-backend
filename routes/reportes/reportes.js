@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
     });
 
     reporte.desglose = ordenesFiltradas.map((obj) => {
-      obj.fecha = moment(obj.fecha).locale("es").format("DD-MMM-YYYY");
+      obj.fecha = moment(obj.fecha).locale("es").format("DD/MM/YYYY");
       return obj;
     });
 
