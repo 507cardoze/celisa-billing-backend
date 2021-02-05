@@ -51,6 +51,7 @@ router.get("/", async (req, res) => {
       return obj;
     });
 
+    console.log("entregando reportes de dashboard...");
     res.status(200).json(reporte);
   } catch (error) {
     console.error(error);
@@ -82,6 +83,7 @@ router.get("/ranking-proveedores", async (req, res) => {
     reporte.total = proveedoresTotal;
     reporte.proveedoresList = TodosProveedores;
 
+    console.log("entregando reportes de dashboard...");
     res.status(200).json(reporte);
   } catch (error) {
     console.error(error);
@@ -105,6 +107,7 @@ router.get("/ranking-vendedores", async (req, res) => {
     const usuariosConVentasTotal = await getAllVendedoresConVentasTotal();
     reporte.usuariosConVenta = usuariosConVentas;
     reporte.usuariosConVentaTotal = usuariosConVentasTotal;
+    console.log("entregando reportes de dashboard...");
     res.status(200).json(reporte);
   } catch (error) {
     console.error(error);
