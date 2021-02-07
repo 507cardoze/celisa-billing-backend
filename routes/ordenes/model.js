@@ -517,6 +517,20 @@ const updatePagoEstatus = async (pago_id, estatus) => {
     });
 };
 
+const updateProductoCampos = async (linea_id, column, newValue) => {
+  return database("linea_compra")
+    .where("linea_id", "=", linea_id)
+    .update({
+      [column]: newValue,
+    })
+    .then((producto) => {
+      return producto;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
 module.exports.getAllOrdenes = getAllOrdenes;
 module.exports.getAllOrdenesWithPages = getAllOrdenesWithPages;
 module.exports.getOrdenesDataExcel = getOrdenesDataExcel;
@@ -538,3 +552,4 @@ module.exports.updateProveedorToProducto = updateProveedorToProducto;
 module.exports.updateOrdenEstado = updateOrdenEstado;
 module.exports.addPago = addPago;
 module.exports.updatePagoEstatus = updatePagoEstatus;
+module.exports.updateProductoCampos = updateProductoCampos;
