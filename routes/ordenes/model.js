@@ -517,11 +517,33 @@ const updatePagoEstatus = async (pago_id, estatus) => {
     });
 };
 
-const updateProductoCampos = async (linea_id, column, newValue) => {
+const getProductoById = (linea_id) => {
+  return database
+    .select("producto as descripcion", "talla", "color", "precio")
+    .from("linea_compra")
+    .where("linea_id", "=", linea_id)
+    .then((producto) => {
+      return producto;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const updateProductoCampos = async (
+  linea_id,
+  descripcion,
+  talla,
+  color,
+  precio,
+) => {
   return database("linea_compra")
     .where("linea_id", "=", linea_id)
     .update({
-      [column]: newValue,
+      producto: descripcion,
+      talla,
+      color,
+      precio,
     })
     .then((producto) => {
       return producto;
@@ -552,4 +574,5 @@ module.exports.updateProveedorToProducto = updateProveedorToProducto;
 module.exports.updateOrdenEstado = updateOrdenEstado;
 module.exports.addPago = addPago;
 module.exports.updatePagoEstatus = updatePagoEstatus;
+module.exports.getProductoById = getProductoById;
 module.exports.updateProductoCampos = updateProductoCampos;

@@ -25,6 +25,7 @@ const {
   addPago,
   updatePagoEstatus,
   updateProductoCampos,
+  getProductoById,
 } = require("./model.js");
 
 router.get("/all-ordenes", verify, async (req, res) => {
@@ -440,13 +441,38 @@ router.put("/delete-pago", verify, async (req, res) => {
   }
 });
 
+router.get("/byProducto", verify, async (req, res) => {
+  const linea_id = req.query.linea_id;
+  try {
+    const query = await getProductoById(linea_id);
+    if (query) {
+      console.log(`buscando campos a producto: ${linea_id}`);
+      res.status(200).json(query);
+    } else {
+      console.log(query);
+      res.status(400).json("error buscar el producto.");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
 router.put("/update-producto", verify, async (req, res) => {
-  const linea_id = req.body.id_producto;
-  const campo = req.body.campo;
-  const updateValue = req.body.newValue;
+  const linea_id = req.body.linea_id;
+  const descripcion = req.body.descripcion;
+  const talla = req.body.talla;
+  const color = req.body.color;
+  const precio = req.body.precio;
 
   try {
-    const query = await updateProductoCampos(linea_id, campo, updateValue);
+    const query = await updateProductoCampos(
+      linea_id,
+      descripcion,
+      talla,
+      color,
+      precio,
+    );
     if (query) {
       console.log(`actualizando campos a producto: ${linea_id}`);
       res.status(200).json("Detalles Actualizados.");
