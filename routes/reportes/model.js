@@ -15,8 +15,8 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
     .select(
       "a.pedido_id",
       "a.orden_id",
-      "a.nombre_cliente",
-      "a.direccion_cliente as direccion",
+      "f.nombre as nombre_cliente",
+      "f.direccion as direccion",
       "a.fecha",
       "a.estado",
       "e.nombre_status",
@@ -53,6 +53,7 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
     )
     .innerJoin("usuarios as d", "a.id_user", "d.user_id")
     .innerJoin("status as e", "a.estado", "e.status_id")
+    .innerJoin("clientes as f", "a.id_cliente", "f.cliente_id")
     .where("a.estatus", "=", 1)
     .whereBetween("a.fecha", [desde, hasta])
     .groupBy("a.orden_id")

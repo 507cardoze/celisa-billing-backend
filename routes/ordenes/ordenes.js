@@ -36,6 +36,8 @@ router.get("/all-ordenes", verify, async (req, res) => {
   const excel = req.query.excel;
   const estado = parseInt(req.query.estado);
 
+  console.log(req.query);
+
   if (excel) {
     try {
       const query = await getOrdenesDataExcel();
@@ -235,31 +237,31 @@ router.get("/get-orden-details/:id_orden", verify, async (req, res) => {
   }
 });
 
-router.put("/update-order-details", verify, async (req, res) => {
-  const id_orden = req.body.id_orden;
-  const nombre_cliente = req.body.nombre_cliente;
-  const numero_cliente = req.body.numero_cliente;
-  const direccion_cliente = req.body.direccion_cliente;
+// router.put("/update-order-details", verify, async (req, res) => {
+//   const id_orden = req.body.id_orden;
+//   const nombre_cliente = req.body.nombre_cliente;
+//   const numero_cliente = req.body.numero_cliente;
+//   const direccion_cliente = req.body.direccion_cliente;
 
-  try {
-    const query = await updateOrderDetails(
-      id_orden,
-      nombre_cliente,
-      numero_cliente,
-      direccion_cliente,
-    );
-    if (query) {
-      console.log(`Actualizando detalles de orden: ${id_orden}`);
-      res.status(200).json("Detalles Actualizados.");
-    } else {
-      console.log(query);
-      res.status(400).json("error al actualizar detalle de orden");
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
+//   try {
+//     const query = await updateOrderDetails(
+//       id_orden,
+//       nombre_cliente,
+//       numero_cliente,
+//       direccion_cliente,
+//     );
+//     if (query) {
+//       console.log(`Actualizando detalles de orden: ${id_orden}`);
+//       res.status(200).json("Detalles Actualizados.");
+//     } else {
+//       console.log(query);
+//       res.status(400).json("error al actualizar detalle de orden");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json(error);
+//   }
+// });
 
 router.post("/add-product-orden", verify, async (req, res) => {
   const id_orden = req.body.id_orden;

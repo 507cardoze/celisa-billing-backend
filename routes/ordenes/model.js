@@ -3,14 +3,23 @@ const { database } = require("../../database/database");
 const getAllOrdenes = async (estado = 0) => {
   return database
     .select(
-      "a.*",
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
       "b.name as nombre",
       "b.lastname as apellido",
       "c.nombre_status",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
     .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .then((orden) => {
       if (estado !== 0) {
@@ -31,14 +40,23 @@ const getAllOrdenes = async (estado = 0) => {
 const getAllMyOrdenes = async (estado = 0, id_user) => {
   return database
     .select(
-      "a.*",
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
       "b.name as nombre",
       "b.lastname as apellido",
       "c.nombre_status",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
     .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.id_user", "=", id_user)
     .andWhere("a.estatus", "=", 1)
     .then((orden) => {
@@ -66,14 +84,23 @@ const getAllOrdenesWithPages = async (
 ) => {
   return database
     .select(
-      "a.*",
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
       "b.name as nombre",
       "b.lastname as apellido",
       "c.nombre_status",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
     .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .limit(limit)
     .offset(offset)
@@ -104,14 +131,23 @@ const getAllMyOrdenesWithPages = async (
 ) => {
   return database
     .select(
-      "a.*",
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
       "b.name as nombre",
       "b.lastname as apellido",
       "c.nombre_status",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
     .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.id_user", "=", id_user)
     .andWhere("a.estatus", "=", 1)
     .limit(limit)
@@ -136,14 +172,23 @@ const getAllMyOrdenesWithPages = async (
 const getOrdenesDataExcel = async () => {
   return database
     .select(
-      "a.*",
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
       "b.name as nombre",
       "b.lastname as apellido",
       "c.nombre_status as estado de la orden",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
     .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .then((orden) => {
       return orden;
@@ -320,7 +365,12 @@ const crearProducto = async (
 const getOrdenDetailById = async (id_orden) => {
   return database
     .select(
-      "a.*",
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
       "b.name as nombre",
       "b.lastname as apellido",
       "b.correo_electronico",
@@ -328,10 +378,14 @@ const getOrdenDetailById = async (id_orden) => {
       "b.address",
       "c.nombre_status",
       "a.estado as estado_id",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
     .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .andWhere("a.orden_id", "=", id_orden)
     .then((orden) => {
@@ -384,26 +438,26 @@ const getAllPagosByOrdenId = async (id_orden) => {
     });
 };
 
-const updateOrderDetails = async (
-  id_orden,
-  nombre_cliente,
-  numero_cliente,
-  direccion_cliente,
-) => {
-  return database("ordenes")
-    .where("orden_id", "=", id_orden)
-    .update({
-      nombre_cliente: nombre_cliente,
-      numero_cliente: numero_cliente,
-      direccion_cliente: direccion_cliente,
-    })
-    .then((orden) => {
-      return orden;
-    })
-    .catch((err) => {
-      return err;
-    });
-};
+// const updateOrderDetails = async (
+//   id_orden,
+//   nombre_cliente,
+//   numero_cliente,
+//   direccion_cliente,
+// ) => {
+//   return database("ordenes")
+//     .where("orden_id", "=", id_orden)
+//     .update({
+//       nombre_cliente: nombre_cliente,
+//       numero_cliente: numero_cliente,
+//       direccion_cliente: direccion_cliente,
+//     })
+//     .then((orden) => {
+//       return orden;
+//     })
+//     .catch((err) => {
+//       return err;
+//     });
+// };
 
 const updateProductoEstatus = async (linea_id, estatus) => {
   return database("linea_compra")
@@ -567,7 +621,7 @@ module.exports.paginateQueryMyResults = paginateQueryMyResults;
 module.exports.getOrdenDetailById = getOrdenDetailById;
 module.exports.getAllProductosByOrdenId = getAllProductosByOrdenId;
 module.exports.getAllPagosByOrdenId = getAllPagosByOrdenId;
-module.exports.updateOrderDetails = updateOrderDetails;
+//module.exports.updateOrderDetails = updateOrderDetails;
 module.exports.updateProductoEstatus = updateProductoEstatus;
 module.exports.addCantidadProductos = addCantidadProductos;
 module.exports.restarCantidadProductos = restarCantidadProductos;
