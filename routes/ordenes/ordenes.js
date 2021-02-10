@@ -146,13 +146,14 @@ router.get("/search", verify, async (req, res) => {
 router.post("/crear", verify, async (req, res) => {
   const orden = req.body.orden;
   const user_id = req.user.user_id;
+
   //verificar que el pedido exista y este activo
 
   //verificar que tiene productos
   if (orden.productos.length === 0)
     return res.status(400).json("no hay productos para esta orden");
 
-  //guardar la orden en tabla de ordenes
+  // //guardar la orden en tabla de ordenes
   const guardarOrden = await crearOrden(
     orden,
     user_id,
@@ -161,7 +162,7 @@ router.post("/crear", verify, async (req, res) => {
   if (!guardarOrden) res.status(400).json("error al guardar la orden");
   console.log("orden creada..");
 
-  //crear los productos en tabla de linea de compra
+  // //crear los productos en tabla de linea de compra
   orden.productos.forEach(async (producto) => {
     const guardar = await crearProducto(
       orden.id_pedido,

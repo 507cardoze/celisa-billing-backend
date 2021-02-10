@@ -20,6 +20,7 @@ const proveedores = require("./routes/proveedores/proveedores");
 const status = require("./routes/status/status");
 const tipoPago = require("./routes/tipoPago/tipoPago");
 const reportes = require("./routes/reportes/reportes");
+const clientes = require("./routes/clientes/clientes");
 // rutas
 app.use("/v1/auth", auth);
 app.use("/v1/pais", pais);
@@ -29,6 +30,7 @@ app.use("/v1/proveedores", proveedores);
 app.use("/v1/status", status);
 app.use("/v1/tipoPago", tipoPago);
 app.use("/v1/reportes", reportes);
+app.use("/v1/clientes", clientes);
 
 app.listen(process.env.PORT, () =>
   console.log(`servidor escuchando: localhost:${process.env.PORT}`),

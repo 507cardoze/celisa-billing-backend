@@ -274,6 +274,7 @@ const crearOrden = async (obj, id_user, fecha) => {
       nombre_cliente: obj.nombre_cliente,
       direccion_cliente: obj.direccion_cliente,
       numero_cliente: obj.numero_cliente,
+      id_cliente: obj.id_cliente,
       estatus: 1,
       estado: 1,
     })
