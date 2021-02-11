@@ -397,6 +397,7 @@ const getOrdenDetailById = async (id_orden) => {
       "d.nombre as nombre_cliente",
       "d.direccion as direccion_cliente",
       "d.numero as numero_cliente",
+      "a.id_cliente",
     )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")

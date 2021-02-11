@@ -221,6 +221,7 @@ router.get("/get-orden-details/:id_orden", verify, async (req, res) => {
     orden.fecha_creacion = ordenDetail[0].fecha;
     orden.estado = ordenDetail[0].nombre_status;
     orden.estado_id = ordenDetail[0].estado_id;
+    orden.id_cliente = ordenDetail[0].id_cliente;
 
     const allProductos = await getAllProductosByOrdenId(id_orden);
     orden.productos = allProductos;
