@@ -131,8 +131,79 @@ const verifyUserwithClientes = async (
     });
 };
 
+const getClientDtails = async (client_id) => {
+  return database
+    .select("a.*", "b.pais")
+    .from("clientes as a")
+    .innerJoin("pais as b", "a.id_pais", "b.pais_id")
+    .where("a.activo", "=", 1)
+    .andWhere("a.cliente_id", "=", client_id)
+    .then((cliente) => {
+      return cliente;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
+const updateClientDetails = async (obj) => {
+  return database("clientes")
+    .update({
+      nombre: obj.nombre,
+      direccion: obj.direccion,
+      id_pais: obj.id_pais,
+      observacion: obj.observacion,
+      numero: obj.numero,
+    })
+    .where("cliente_id", "=", obj.id_cliente)
+    .then((cliente) => {
+      return cliente;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
+const getClientBySearch = async (text) => {
+  return database
+    .select("a.*", "b.pais")
+    .from("clientes as a")
+    .innerJoin("pais as b", "a.id_pais", "b.pais_id")
+    .where("a.activo", "=", 1)
+    .andWhere("a.nombre", "like", `%${text}%`)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
+const crearCliente = async (obj) => {
+  return database("clientes")
+    .insert({
+      nombre: obj.nombre,
+      direccion: obj.direccion,
+      id_pais: obj.id_pais,
+      observacion: obj.observacion,
+      activo: 1,
+      numero: obj.numero,
+      user_id: 0,
+    })
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+
 module.exports.getAllClientes = getAllClientes;
 module.exports.getAllClientesDataExcel = getAllClientesDataExcel;
 module.exports.getAllClientesWithPages = getAllClientesWithPages;
 module.exports.paginateQueryResults = paginateQueryResults;
 module.exports.verifyUserwithClientes = verifyUserwithClientes;
+module.exports.getClientDtails = getClientDtails;
+module.exports.updateClientDetails = updateClientDetails;
+module.exports.getClientBySearch = getClientBySearch;
+module.exports.crearCliente = crearCliente;

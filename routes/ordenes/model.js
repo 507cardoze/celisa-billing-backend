@@ -298,10 +298,26 @@ const paginateQueryMyResults = async (
 
 const getOrdenesBySearch = async (text) => {
   return database
-    .select("a.*", "b.name as nombre", "b.lastname as apellido")
+    .select(
+      "a.orden_id",
+      "a.pedido_id",
+      "a.id_user",
+      "a.fecha",
+      "a.estatus",
+      "a.estado",
+      "b.name as nombre",
+      "b.lastname as apellido",
+      "c.nombre_status as estado de la orden",
+      "d.nombre as nombre_cliente",
+      "d.direccion as direccion_cliente",
+      "d.numero as numero_cliente",
+    )
     .from("ordenes as a")
     .innerJoin("usuarios as b", "a.id_user", "b.user_id")
-    .where("a.nombre_cliente", "like", `%${text}%`)
+    .innerJoin("status as c", "a.estado", "c.status_id")
+    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+    .where("a.estatus", "=", 1)
+    .where("d.nombre", "like", `%${text}%`)
     .then((data) => {
       return data;
     })

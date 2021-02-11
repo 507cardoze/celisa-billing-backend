@@ -36,8 +36,6 @@ router.get("/all-ordenes", verify, async (req, res) => {
   const excel = req.query.excel;
   const estado = parseInt(req.query.estado);
 
-  console.log(req.query);
-
   if (excel) {
     try {
       const query = await getOrdenesDataExcel();
@@ -127,11 +125,11 @@ router.get("/search", verify, async (req, res) => {
   try {
     if (privado === undefined) {
       const query = await getOrdenesBySearch(text);
-      console.log("entregando todas las ordenes segun busqueda ...");
+      console.log("entregando todas las ordenes segun busqueda ... 1");
       res.status(200).json(query.filter((orden) => orden.estatus === 1));
     } else {
       const query = await getOrdenesBySearch(text);
-      console.log("entregando todas las ordenes segun busqueda ...");
+      console.log("entregando todas las ordenes segun busqueda ... 2");
       res
         .status(200)
         .json(
