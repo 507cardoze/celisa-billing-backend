@@ -12,6 +12,7 @@ const {
   getAllVendedoresConVentasTotal,
   getVentasPorFecha,
   getProductosPorFecha,
+  getTotalClientes,
 } = require("./model");
 
 const { getAllProveedores } = require("../proveedores/model");
@@ -29,10 +30,11 @@ router.get("/", async (req, res) => {
 
   try {
     const ordenesFiltradas = await getAllOrdenesByFechaWithCompra(desde, hasta);
+    const clientes = await getTotalClientes();
     reporte.ventasTotales = sumar(ordenesFiltradas, "ventas");
     reporte.pagosTotales = sumar(ordenesFiltradas, "pagos");
     reporte.saldosTotales = sumar(ordenesFiltradas, "saldo");
-
+    reporte.totalClientes = clientes.length;
     reporte.por_fecha = await getVentasPorFecha(desde, hasta);
     reporte.por_fecha.map((obj) => {
       obj.fecha = moment(obj.fecha).locale("es").format("DD/MM/YYYY");

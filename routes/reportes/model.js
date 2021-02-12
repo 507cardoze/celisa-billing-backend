@@ -285,6 +285,13 @@ const getProductosPorFecha = async (desde, hasta) => {
     });
 };
 
+const getTotalClientes = () => {
+  return database("clientes")
+    .distinct()
+    .then((clientes) => clientes)
+    .catch((err) => err);
+};
+
 module.exports.getAllOrdenesByFechaWithCompra = getAllOrdenesByFechaWithCompra;
 module.exports.sumar = sumar;
 module.exports.getAllProveedoresVentas = getAllProveedoresVentas;
@@ -294,3 +301,4 @@ module.exports.getAllVendedoresConVentas = getAllVendedoresConVentas;
 module.exports.getAllVendedoresConVentasTotal = getAllVendedoresConVentasTotal;
 module.exports.getVentasPorFecha = getVentasPorFecha;
 module.exports.getProductosPorFecha = getProductosPorFecha;
+module.exports.getTotalClientes = getTotalClientes;
