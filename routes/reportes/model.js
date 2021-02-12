@@ -80,6 +80,7 @@ const getAllProveedoresVentas = async (desde, hasta) => {
     .andWhere("a.estatus", "=", 1)
     .andWhere("b.estatus", "=", 1)
     .groupBy("a.proveedor")
+    .orderBy("ventas", "DESC")
     .then((response) => {
       return response;
     })
