@@ -153,6 +153,8 @@ router.post("/crear", verify, async (req, res) => {
   if (orden.productos.length === 0)
     return res.status(400).json("no hay productos para esta orden");
 
+  if (!orden.id_cliente)
+    return res.status(400).json("no hay cliente para esta orden");
   // //guardar la orden en tabla de ordenes
   const guardarOrden = await crearOrden(
     orden,
