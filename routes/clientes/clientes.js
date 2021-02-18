@@ -103,10 +103,9 @@ router.get("/clientDetails", verify, async (req, res) => {
 
 router.put("/clientDetails", verify, async (req, res) => {
   const userData = req.body;
-
   try {
     const validacion = await getClientDtails(userData.id_cliente);
-    if (validacion.length) return res.status(400).json("cliente existe");
+    if (validacion.length === 0) return res.status(400).json("cliente existe");
     await updateClientDetails(userData);
     console.log("modificando detalles de cliente");
     res.status(200).json(`Detalles Actualizados.`);
