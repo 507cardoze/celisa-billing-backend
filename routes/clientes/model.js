@@ -6,6 +6,7 @@ const getAllClientes = async (estado = 0) => {
     .from("clientes as a")
     .innerJoin("pais as b", "a.id_pais", "b.pais_id")
     .where("a.activo", "=", 1)
+    .orderBy("a.nombre", "ASC")
     .then((cliente) => {
       if (estado !== 0 && cliente.length > 0)
         return cliente.filter((clt) => clt.activo === estado);
@@ -22,6 +23,7 @@ const getAllClientesDataExcel = async () => {
     .from("clientes as a")
     .innerJoin("pais as b", "a.id_pais", "b.pais_id")
     .where("a.activo", "=", 1)
+    .orderBy("a.nombre", "ASC")
     .then((cliente) => {
       return cliente;
     })
@@ -138,6 +140,7 @@ const getClientDtails = async (client_id) => {
     .innerJoin("pais as b", "a.id_pais", "b.pais_id")
     .where("a.activo", "=", 1)
     .andWhere("a.cliente_id", "=", client_id)
+    .orderBy("a.nombre", "ASC")
     .then((cliente) => {
       return cliente;
     })
@@ -171,6 +174,7 @@ const getClientBySearch = async (text) => {
     .innerJoin("pais as b", "a.id_pais", "b.pais_id")
     .where("a.activo", "=", 1)
     .andWhere("a.nombre", "like", `%${text}%`)
+    .orderBy("a.nombre", "ASC")
     .then((data) => {
       return data;
     })
