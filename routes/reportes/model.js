@@ -69,6 +69,7 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
 const getAllProveedoresVentas = async (desde, hasta) => {
   return database
     .select(
+      "a.proveedor_id",
       "a.proveedor",
       database.raw(`SUM(IFNULL(b.cantidad,0)) as productos`),
       database.raw(`IFNULL(ROUND(SUM(b.cantidad * b.precio),2),0) as ventas`),
@@ -92,6 +93,7 @@ const getAllProveedoresVentas = async (desde, hasta) => {
 const getAllProveedoresVentasTotal = async () => {
   return database
     .select(
+      "a.proveedor_id",
       "a.proveedor",
       database.raw(`SUM(IFNULL(b.cantidad,0)) as productos`),
       database.raw(`IFNULL(ROUND(SUM(b.cantidad * b.precio),2),0) as ventas`),
@@ -124,6 +126,7 @@ const getAllProductosSinProveedor = async () => {
 const getAllVendedoresConVentas = async (desde, hasta) => {
   return database
     .select(
+      "a.user_id",
       "a.name",
       "a.lastname",
       database.raw(`COUNT(b.orden_id) as ventas`),
@@ -170,6 +173,7 @@ const getAllVendedoresConVentas = async (desde, hasta) => {
 const getAllVendedoresConVentasTotal = async () => {
   return database
     .select(
+      "a.user_id",
       "a.name",
       "a.lastname",
       database.raw(`COUNT(b.orden_id) as ventas`),
