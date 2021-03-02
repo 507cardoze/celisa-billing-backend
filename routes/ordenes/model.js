@@ -22,12 +22,8 @@ const getAllOrdenes = async (estado = 0) => {
     .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .then((orden) => {
-      if (estado !== 0) {
-        if (orden.length > 0) {
-          return orden.filter((ord) => ord.estado === estado);
-        } else {
-          return orden;
-        }
+      if (estado !== 0 && orden.length > 0) {
+        return orden.filter((ord) => ord.estado === estado);
       } else {
         return orden;
       }
@@ -60,12 +56,8 @@ const getAllMyOrdenes = async (estado = 0, id_user) => {
     .where("a.id_user", "=", id_user)
     .andWhere("a.estatus", "=", 1)
     .then((orden) => {
-      if (estado !== 0) {
-        if (orden.length > 0) {
-          return orden.filter((ord) => ord.estado === estado);
-        } else {
-          return orden;
-        }
+      if (estado !== 0 && orden.length > 0) {
+        return orden.filter((ord) => ord.estado === estado);
       } else {
         return orden;
       }
@@ -106,12 +98,8 @@ const getAllOrdenesWithPages = async (
     .offset(offset)
     .orderBy(`${atrib}`, `${order}`)
     .then((orden) => {
-      if (estado !== 0) {
-        if (orden.length > 0) {
-          return orden.filter((ord) => ord.estado === estado);
-        } else {
-          return orden;
-        }
+      if (estado !== 0 && orden.length > 0) {
+        return orden.filter((ord) => ord.estado === estado);
       } else {
         return orden;
       }
@@ -155,11 +143,9 @@ const getAllMyOrdenesWithPages = async (
     .orderBy(`${atrib}`, `${order}`)
     .then((orden) => {
       if (estado !== 0) {
-        if (orden.length > 0) {
+        if (orden.length > 0)
           return orden.filter((ord) => ord.estado === estado);
-        } else {
-          return orden;
-        }
+        return orden;
       } else {
         return orden;
       }
@@ -215,7 +201,7 @@ const paginateQueryResults = async (
   const endIndex = page * limit;
   const results = {};
   const total = await getAll(estado);
-  const definitivo_total = await getAll();
+  const definitivo_total = await getAll(estado);
   results.dashboard = {
     total: definitivo_total.length,
     pendiente: getOrdersByEstado(definitivo_total, 1),
