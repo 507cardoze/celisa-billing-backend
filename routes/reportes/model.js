@@ -25,10 +25,10 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       "e.nombre_status",
       "d.user_id as id_vendedores",
       database.raw(`CONCAT(d.name,' ', d.lastname) as vendedor`),
-      database.raw(`SUM(ventas.ventas)  AS ventas`),
-      database.raw(`IFNULL(ROUND(pago.pagos,2),0) as pagos`),
+      database.raw(`SUM(IFNULL(ventas.ventas,0))  AS ventas`),
+      database.raw(`ROUND(IFNULL(pago.pagos,0),2) as pagos`),
       database.raw(
-        `SUM(ventas.ventas) - IFNULL(ROUND(pago.pagos,2),0) as saldo`,
+        `SUM(IFNULL(ventas.ventas,0)) - ROUND(IFNULL(pago.pagos,0),2) as saldo`,
       ),
     )
     .from("ordenes AS a")
@@ -36,7 +36,9 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       database
         .select(
           "orden_id",
-          database.raw(`ROUND(SUM(cantidad * precio),2) as ventas`),
+          database.raw(
+            `ROUND(SUM(IFNULL(cantidad,0) * IFNULL(precio,0)),2) as ventas`,
+          ),
         )
         .from("linea_compra")
         .where("estatus", "=", 1)
@@ -47,7 +49,10 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
     )
     .leftJoin(
       database
-        .select("orden_id", database.raw(`ROUND(SUM(cantidad),2) as pagos`))
+        .select(
+          "orden_id",
+          database.raw(`ROUND(SUM(IFNULL(cantidad,0)),2) as pagos`),
+        )
         .from("linea_pago")
         .where("estatus", "=", 1)
         .groupBy("orden_id")
@@ -77,7 +82,9 @@ const getAllProveedoresVentas = async (desde, hasta) => {
       "a.proveedor_id",
       "a.proveedor",
       database.raw(`SUM(IFNULL(b.cantidad,0)) as productos`),
-      database.raw(`IFNULL(ROUND(SUM(b.cantidad * b.precio),2),0) as ventas`),
+      database.raw(
+        `ROUND(SUM(IFNULL(b.cantidad,0) * IFNULL(b.precio,0)),2) as ventas`,
+      ),
     )
     .from("proveedores as a")
     .leftJoin("linea_compra as b", "b.proveedor_id", "a.proveedor_id")
@@ -101,7 +108,9 @@ const getAllProveedoresVentasTotal = async () => {
       "a.proveedor_id",
       "a.proveedor",
       database.raw(`SUM(IFNULL(b.cantidad,0)) as productos`),
-      database.raw(`IFNULL(ROUND(SUM(b.cantidad * b.precio),2),0) as ventas`),
+      database.raw(
+        `ROUND(SUM(IFNULL(b.cantidad,0) * IFNULL(b.precio,0)),2) as ventas`,
+      ),
     )
     .from("proveedores as a")
     .leftJoin("linea_compra as b", "b.proveedor_id", "a.proveedor_id")
@@ -135,8 +144,8 @@ const getAllVendedoresConVentas = async (desde, hasta) => {
       "a.name",
       "a.lastname",
       database.raw(`COUNT(b.orden_id) as ventas`),
-      database.raw(`SUM(ventas.ventasTotal) as ventas_total`),
-      database.raw(`IFNULL(ROUND(SUM(pago.pagos),2),0) as pagado`),
+      database.raw(`SUM(IFNULL(ventas.ventasTotal,0)) as ventas_total`),
+      database.raw(`ROUND(SUM(IFNULL(pago.pagos,0)),2) as pagado`),
     )
     .from("usuarios as a")
     .innerJoin("ordenes as b", "b.id_user", "a.user_id")
@@ -144,7 +153,9 @@ const getAllVendedoresConVentas = async (desde, hasta) => {
       database
         .select(
           "orden_id",
-          database.raw("ROUND(SUM(cantidad * precio),2) as ventasTotal"),
+          database.raw(
+            "ROUND(SUM(IFNULL(cantidad,0) * IFNULL(precio,0)),2) as ventasTotal",
+          ),
         )
         .from("linea_compra")
         .where("estatus", "=", 1)
@@ -155,7 +166,10 @@ const getAllVendedoresConVentas = async (desde, hasta) => {
     )
     .leftJoin(
       database
-        .select("orden_id", database.raw(`ROUND(SUM(cantidad),2) as pagos`))
+        .select(
+          "orden_id",
+          database.raw(`ROUND(SUM(IFNULL(cantidad,0)),2) as pagos`),
+        )
         .from("linea_pago")
         .where("estatus", "=", 1)
         .groupBy("orden_id")
@@ -182,8 +196,8 @@ const getAllVendedoresConVentasTotal = async () => {
       "a.name",
       "a.lastname",
       database.raw(`COUNT(b.orden_id) as ventas`),
-      database.raw(`SUM(ventas.ventasTotal) as ventas_total`),
-      database.raw(`IFNULL(ROUND(SUM(pago.pagos),2),0) as pagado`),
+      database.raw(`SUM(IFNULL(ventas.ventasTotal,0)) as ventas_total`),
+      database.raw(`ROUND(SUM(IFNULL(pago.pagos,0)),2) as pagado`),
     )
     .from("usuarios as a")
     .innerJoin("ordenes as b", "b.id_user", "a.user_id")
@@ -191,7 +205,9 @@ const getAllVendedoresConVentasTotal = async () => {
       database
         .select(
           "orden_id",
-          database.raw("ROUND(SUM(cantidad * precio),2) as ventasTotal"),
+          database.raw(
+            "ROUND(SUM(IFNULL(cantidad,0) * IFNULL(precio,0)),2) as ventasTotal",
+          ),
         )
         .from("linea_compra")
         .where("estatus", "=", 1)
@@ -202,7 +218,10 @@ const getAllVendedoresConVentasTotal = async () => {
     )
     .leftJoin(
       database
-        .select("orden_id", database.raw(`ROUND(SUM(cantidad),2) as pagos`))
+        .select(
+          "orden_id",
+          database.raw(`ROUND(SUM(IFNULL(cantidad,0)),2) as pagos`),
+        )
         .from("linea_pago")
         .where("estatus", "=", 1)
         .groupBy("orden_id")
@@ -226,14 +245,16 @@ const getVentasPorFecha = async (desde, hasta) => {
     .select(
       "a.fecha",
       database.raw(`SUM(ventas.ventas)  AS ventas`),
-      database.raw(`IFNULL(ROUND(SUM(pago.pagos),2),0) as pagado`),
+      database.raw(`ROUND(SUM(IFNULL(pago.pagos,0)),2) as pagado`),
     )
     .from("ordenes AS a")
     .leftJoin(
       database
         .select(
           "orden_id",
-          database.raw(`ROUND(SUM(cantidad * precio),2) as ventas`),
+          database.raw(
+            `ROUND(SUM(IFNULL(cantidad,0) * IFNULL(precio,0)),2) as ventas`,
+          ),
         )
         .from("linea_compra")
         .where("estatus", "=", 1)
@@ -244,7 +265,10 @@ const getVentasPorFecha = async (desde, hasta) => {
     )
     .leftJoin(
       database
-        .select("orden_id", database.raw(`ROUND(SUM(cantidad),2) as pagos`))
+        .select(
+          "orden_id",
+          database.raw(`ROUND(SUM(IFNULL(cantidad,0)),2) as pagos`),
+        )
         .from("linea_pago")
         .where("estatus", "=", 1)
         .groupBy("orden_id")
@@ -297,8 +321,123 @@ const getProductosPorFecha = async (desde, hasta) => {
 const getTotalClientes = () => {
   return database("clientes")
     .distinct()
+    .where("activo", "=", 1)
+    .orderBy("nombre", "ASC")
     .then((clientes) => clientes)
     .catch((err) => err);
+};
+
+const getAllClientesConVentas = async (desde, hasta) => {
+  return database
+    .select(
+      "a.cliente_id",
+      "a.nombre",
+      "a.direccion",
+      "a.observacion",
+      "a.numero",
+      database.raw(`COUNT(b.orden_id) as numero_ventas`),
+      database.raw(`SUM(IFNULL(ventas.ventasTotal,0)) as ventas_total`),
+      database.raw(`ROUND(SUM(IFNULL(pago.pagos,0)),2) as pagado`),
+      database.raw(
+        `SUM(IFNULL(ventas.ventasTotal,0)) - ROUND(SUM(IFNULL(pago.pagos,0)),2) as saldo`,
+      ),
+    )
+    .from("clientes as a")
+    .innerJoin("ordenes as b", "b.id_cliente", "a.cliente_id")
+    .leftJoin(
+      database
+        .select(
+          "orden_id",
+          database.raw(
+            `IFNULL(ROUND(SUM(cantidad * precio),2),0) as ventasTotal`,
+          ),
+        )
+        .from("linea_compra")
+        .where("estatus", "=", 1)
+        .groupBy("orden_id")
+        .as("ventas"),
+      "ventas.orden_id",
+      "b.orden_id",
+    )
+    .leftJoin(
+      database
+        .select(
+          "orden_id",
+          database.raw(`IFNULL(ROUND(SUM(cantidad),2),0) as pagos`),
+        )
+        .from("linea_pago")
+        .where("estatus", "=", 1)
+        .groupBy("orden_id")
+        .as("pago"),
+      "pago.orden_id",
+      "b.orden_id",
+    )
+    .whereBetween("b.fecha", [desde, hasta])
+    .andWhere("a.activo", "=", 1)
+    .andWhere("b.estatus", "=", 1)
+    .groupBy("a.cliente_id")
+    .orderBy("ventas_total", "DESC")
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err;
+    });
+};
+
+const getAllClientesConSaldosAltos = async (desde, hasta) => {
+  return database
+    .select(
+      "a.cliente_id",
+      "a.nombre",
+      "a.direccion",
+      "a.observacion",
+      "a.numero",
+      database.raw(`COUNT(b.orden_id) as numero_ventas`),
+      database.raw(`SUM(IFNULL(ventas.ventasTotal,0)) as ventas_total`),
+      database.raw(`ROUND(SUM(IFNULL(pago.pagos,0)),2) as pagado`),
+      database.raw(
+        `SUM(IFNULL(ventas.ventasTotal,0)) - ROUND(SUM(IFNULL(pago.pagos,0)),2) as saldo`,
+      ),
+    )
+    .from("clientes as a")
+    .innerJoin("ordenes as b", "b.id_cliente", "a.cliente_id")
+    .leftJoin(
+      database
+        .select(
+          "orden_id",
+          database.raw("ROUND(SUM(cantidad * precio),2) as ventasTotal"),
+        )
+        .from("linea_compra")
+        .where("estatus", "=", 1)
+        .groupBy("orden_id")
+        .as("ventas"),
+      "ventas.orden_id",
+      "b.orden_id",
+    )
+    .leftJoin(
+      database
+        .select("orden_id", database.raw(`ROUND(SUM(cantidad),2) as pagos`))
+        .from("linea_pago")
+        .where("estatus", "=", 1)
+        .groupBy("orden_id")
+        .as("pago"),
+      "pago.orden_id",
+      "b.orden_id",
+    )
+    .whereBetween("b.fecha", [desde, hasta])
+    .andWhere("a.activo", "=", 1)
+    .andWhere("b.estatus", "=", 1)
+    .groupBy("a.cliente_id")
+    .orderBy("saldo", "DESC")
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err;
+    });
 };
 
 module.exports.getAllOrdenesByFechaWithCompra = getAllOrdenesByFechaWithCompra;
@@ -311,3 +450,5 @@ module.exports.getAllVendedoresConVentasTotal = getAllVendedoresConVentasTotal;
 module.exports.getVentasPorFecha = getVentasPorFecha;
 module.exports.getProductosPorFecha = getProductosPorFecha;
 module.exports.getTotalClientes = getTotalClientes;
+module.exports.getAllClientesConVentas = getAllClientesConVentas;
+module.exports.getAllClientesConSaldosAltos = getAllClientesConSaldosAltos;
