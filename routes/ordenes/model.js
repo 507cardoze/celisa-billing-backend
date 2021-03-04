@@ -538,6 +538,7 @@ const addPago = async (
   orden_id,
   id_user,
   adjunto,
+  comentarios,
 ) => {
   return database("linea_pago")
     .insert({
@@ -549,6 +550,7 @@ const addPago = async (
       estatus: estatus,
       orden_id: orden_id,
       adjunto: adjunto,
+      comentarios: comentarios,
     })
     .then((pago) => {
       return pago;

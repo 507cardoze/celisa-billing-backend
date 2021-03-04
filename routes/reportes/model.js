@@ -18,7 +18,8 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       "a.id_cliente",
       "f.nombre as nombre_cliente",
       "f.direccion as direccion",
-      "f.user_id as revendedoraRef",
+      "f.id_admin as revendedoraRef",
+      "f.user_id as usuarioRef",
       "a.fecha",
       "a.estado",
       "e.nombre_status",
@@ -65,6 +66,7 @@ const getAllOrdenesByFechaWithCompra = async (desde, hasta) => {
       return ordenes;
     })
     .catch((error) => {
+      console.log(error);
       return error;
     });
 };

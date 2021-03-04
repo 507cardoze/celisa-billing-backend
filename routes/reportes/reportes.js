@@ -18,7 +18,7 @@ const {
 const { getAllProveedores } = require("../proveedores/model");
 
 router.get("/", async (req, res) => {
-  if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
+  if (!req.query.desde || !req.query.hasta) return res.status(400).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
   const fecha = moment().locale("es").format("DD-MM-YYYY hh:mm a");

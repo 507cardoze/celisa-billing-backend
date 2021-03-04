@@ -22,6 +22,8 @@ const {
   getUserDataExcel,
 } = require("./model.js");
 
+const { verifyUserwithClientes } = require("../clientes/model");
+
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -89,7 +91,16 @@ router.post("/register", async (req, res) => {
       address,
       id_pais,
     );
-    if (!query) return res.status(400).json(query);
+    // crear plantilla de cliente por si tiene posibles ventas
+    await verifyUserwithClientes(
+      query[0],
+      `${name} ${lastname}`,
+      address,
+      id_pais,
+      contact_number,
+    );
+
+    if (!query) return res.status(400).json("error al crear usuario");
     console.log("registrando usuario ...");
     res.status(201).json("Usuario creado exitosamente.");
   } catch (err) {

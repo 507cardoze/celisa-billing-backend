@@ -395,6 +395,7 @@ router.post("/agregar-pago", verify, async (req, res) => {
   const adjunto = req.body.adjunto;
   const cantidad = req.body.cantidad;
   const user_id = req.user.user_id;
+  const comentarios = req.body.comentarios;
   const fecha_pago = moment().format("YYYY-MM-DD");
   const estatus = 1;
 
@@ -413,6 +414,7 @@ router.post("/agregar-pago", verify, async (req, res) => {
       id_orden,
       user_id,
       adjunto,
+      comentarios,
     );
     if (query) {
       console.log(`agregando pago a la orden: ${id_orden}`);
