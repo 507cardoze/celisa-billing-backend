@@ -19,7 +19,7 @@ const {
 
 const { getAllProveedores } = require("../proveedores/model");
 
-router.get("/", async (req, res) => {
+router.get("/", verify, async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(400).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
@@ -63,7 +63,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/ranking-proveedores", async (req, res) => {
+router.get("/ranking-proveedores", verify, async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
@@ -95,7 +95,7 @@ router.get("/ranking-proveedores", async (req, res) => {
   }
 });
 
-router.get("/ranking-vendedores", async (req, res) => {
+router.get("/ranking-vendedores", verify, async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
@@ -119,7 +119,7 @@ router.get("/ranking-vendedores", async (req, res) => {
   }
 });
 
-router.get("/ranking-clientes", async (req, res) => {
+router.get("/ranking-clientes", verify, async (req, res) => {
   if (!req.query.desde || !req.query.hasta) return res.status(404).json({});
   const desde = req.query.desde;
   const hasta = req.query.hasta;
