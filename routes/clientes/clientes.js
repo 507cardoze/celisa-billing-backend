@@ -11,6 +11,7 @@ const {
   updateClientDetails,
   getClientBySearch,
   crearCliente,
+  updateClientRevendedoraDetails,
 } = require("./model");
 
 const { getUserData } = require("../auth/model");
@@ -108,6 +109,19 @@ router.put("/clientDetails", verify, async (req, res) => {
     if (validacion.length === 0) return res.status(400).json("cliente existe");
     await updateClientDetails(userData);
     console.log("modificando detalles de cliente");
+    res.status(200).json(`Detalles Actualizados.`);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+router.put("/clientRevendedora", verify, async (req, res) => {
+  const userData = req.body;
+  try {
+    const validacion = await getClientDtails(userData.id_cliente);
+    if (validacion.length === 0) return res.status(400).json("cliente existe");
+    await updateClientRevendedoraDetails(userData);
+    console.log("modificando revendedoras del cliente");
     res.status(200).json(`Detalles Actualizados.`);
   } catch (error) {
     console.log(error);

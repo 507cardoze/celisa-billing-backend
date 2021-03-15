@@ -202,6 +202,21 @@ const crearCliente = async (obj) => {
     });
 };
 
+const updateClientRevendedoraDetails = async (obj) => {
+  return database("clientes")
+    .update({
+      user_id: obj.selectedUsuario,
+      id_admin: obj.selectedAdmin,
+    })
+    .where("cliente_id", "=", obj.id_cliente)
+    .then((cliente) => {
+      return cliente;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 module.exports.getAllClientes = getAllClientes;
 module.exports.getAllClientesDataExcel = getAllClientesDataExcel;
 module.exports.getAllClientesWithPages = getAllClientesWithPages;
@@ -211,3 +226,4 @@ module.exports.getClientDtails = getClientDtails;
 module.exports.updateClientDetails = updateClientDetails;
 module.exports.getClientBySearch = getClientBySearch;
 module.exports.crearCliente = crearCliente;
+module.exports.updateClientRevendedoraDetails = updateClientRevendedoraDetails;
