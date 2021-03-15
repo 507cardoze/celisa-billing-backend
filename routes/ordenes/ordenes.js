@@ -26,7 +26,13 @@ const {
   updatePagoEstatus,
   updateProductoCampos,
   getProductoById,
+  getAdminRevendedor,
+  getAllMyOrdenesRevendedor,
+  getAllMyOrdenesWithPagesRevendedor,
+  paginateQueryMyResultsRevendedora,
 } = require("./model.js");
+
+const { getClientDetailsByUserID } = require("../clientes/model");
 
 router.get("/all-ordenes", verify, async (req, res) => {
   const page = parseInt(req.query.page);
@@ -84,19 +90,12 @@ router.get("/my-ordenes", verify, async (req, res) => {
   const order = req.query.order;
   const estado = parseInt(req.query.estado);
   const user_id = req.user.user_id;
+  const rol = req.user.rol;
+
+  const verifyUser = await getClientDetailsByUserID(user_id);
 
   try {
-    if (
-      req.query.page === undefined &&
-      req.query.limit === undefined &&
-      req.query.atrib === undefined &&
-      req.query.order === undefined &&
-      req.query.estado === undefined
-    ) {
-      const query = await getAllMyOrdenes(0, user_id);
-      console.log("dataset de tabla de ordenes completa ...");
-      res.status(200).json(query);
-    } else {
+    if (rol === "Administrador") {
       const query = await paginateQueryMyResults(
         page,
         limit,
@@ -107,7 +106,20 @@ router.get("/my-ordenes", verify, async (req, res) => {
         estado,
         user_id,
       );
-      console.log("entregando todos los ordenes ...");
+      console.log("entregando todos mis ordenes de administrador ...");
+      res.status(200).json(query);
+    } else {
+      const query = await paginateQueryMyResultsRevendedora(
+        page,
+        limit,
+        atrib,
+        order,
+        getAllMyOrdenesRevendedor,
+        getAllMyOrdenesWithPagesRevendedor,
+        estado,
+        verifyUser[0].cliente_id,
+      );
+      console.log("entregando todos mis ordenes de usuario final ...");
       res.status(200).json(query);
     }
   } catch (error) {
@@ -146,8 +158,15 @@ router.get("/search", verify, async (req, res) => {
 router.post("/crear", verify, async (req, res) => {
   const orden = req.body.orden;
   const user_id = req.user.user_id;
+  const rol = req.user.rol;
 
-  //verificar que el pedido exista y este activo
+  const verifyCliente = await getAdminRevendedor(orden.id_cliente);
+
+  // si el usuario es admin entra la venta por su nombre
+
+  // si el usuario es usuario final la venta entra por su admin
+
+  // si el usuario es usuario final y no tiene admin entra user 7
 
   //verificar que tiene productos
   if (orden.productos.length === 0)
@@ -158,7 +177,7 @@ router.post("/crear", verify, async (req, res) => {
   // //guardar la orden en tabla de ordenes
   const guardarOrden = await crearOrden(
     orden,
-    user_id,
+    rol === "Administrador" ? user_id : verifyCliente[0].id_admin,
     moment().format("YYYY-MM-DD"),
   );
   if (!guardarOrden) res.status(400).json("error al guardar la orden");

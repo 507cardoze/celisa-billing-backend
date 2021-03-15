@@ -1,70 +1,60 @@
 const { database } = require("../../database/database");
 
 const getAllOrdenes = async (estado = 0) => {
-  return database
-    .select(
-      "a.orden_id",
-      "a.pedido_id",
-      "a.id_user",
-      "a.fecha",
-      "a.estatus",
-      "a.estado",
-      "b.name as nombre",
-      "b.lastname as apellido",
-      "c.nombre_status",
-      "d.nombre as nombre_cliente",
-      "d.direccion as direccion_cliente",
-      "d.numero as numero_cliente",
-    )
-    .from("ordenes as a")
-    .innerJoin("usuarios as b", "a.id_user", "b.user_id")
-    .innerJoin("status as c", "a.estado", "c.status_id")
-    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
-    .where("a.estatus", "=", 1)
-    .then((orden) => {
-      if (estado !== 0 && orden.length > 0) {
-        return orden.filter((ord) => ord.estado === estado);
-      } else {
-        return orden;
-      }
-    })
-    .catch((error) => {
-      return error;
-    });
-};
+  switch (estado) {
+    case 0:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.estatus", "=", 1)
+        .then((orden) => orden)
+        .catch((error) => error);
 
-const getAllMyOrdenes = async (estado = 0, id_user) => {
-  return database
-    .select(
-      "a.orden_id",
-      "a.pedido_id",
-      "a.id_user",
-      "a.fecha",
-      "a.estatus",
-      "a.estado",
-      "b.name as nombre",
-      "b.lastname as apellido",
-      "c.nombre_status",
-      "d.nombre as nombre_cliente",
-      "d.direccion as direccion_cliente",
-      "d.numero as numero_cliente",
-    )
-    .from("ordenes as a")
-    .innerJoin("usuarios as b", "a.id_user", "b.user_id")
-    .innerJoin("status as c", "a.estado", "c.status_id")
-    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
-    .where("a.id_user", "=", id_user)
-    .andWhere("a.estatus", "=", 1)
-    .then((orden) => {
-      if (estado !== 0 && orden.length > 0) {
-        return orden.filter((ord) => ord.estado === estado);
-      } else {
-        return orden;
-      }
-    })
-    .catch((error) => {
-      return error;
-    });
+    default:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.estatus", "=", 1)
+        .andWhere("a.estado", "=", estado)
+        .then((orden) => orden)
+        .catch((error) => error);
+  }
 };
 
 const getAllOrdenesWithPages = async (
@@ -74,39 +64,125 @@ const getAllOrdenesWithPages = async (
   order,
   estado = 0,
 ) => {
-  return database
-    .select(
-      "a.orden_id",
-      "a.pedido_id",
-      "a.id_user",
-      "a.fecha",
-      "a.estatus",
-      "a.estado",
-      "b.name as nombre",
-      "b.lastname as apellido",
-      "c.nombre_status",
-      "d.nombre as nombre_cliente",
-      "d.direccion as direccion_cliente",
-      "d.numero as numero_cliente",
-    )
-    .from("ordenes as a")
-    .innerJoin("usuarios as b", "a.id_user", "b.user_id")
-    .innerJoin("status as c", "a.estado", "c.status_id")
-    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
-    .where("a.estatus", "=", 1)
-    .limit(limit)
-    .offset(offset)
-    .orderBy(`${atrib}`, `${order}`)
-    .then((orden) => {
-      if (estado !== 0 && orden.length > 0) {
-        return orden.filter((ord) => ord.estado === estado);
-      } else {
-        return orden;
-      }
-    })
-    .catch((error) => {
-      return error;
-    });
+  switch (estado) {
+    case 0:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.estatus", "=", 1)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(`${atrib}`, `${order}`)
+        .then((orden) => orden)
+        .catch((error) => error);
+
+    default:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.estatus", "=", 1)
+        .andWhere("a.estado", "=", estado)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(`${atrib}`, `${order}`)
+        .then((orden) => orden)
+        .catch((error) => error);
+  }
+};
+
+const getAllMyOrdenes = async (estado = 0, id_user) => {
+  switch (estado) {
+    case 0:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.id_user", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .then((orden) => orden)
+        .catch((error) => error);
+
+    default:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.id_user", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .andWhere("a.estado", "=", estado)
+        .then((orden) => orden)
+        .catch((error) => error);
+  }
 };
 
 const getAllMyOrdenesWithPages = async (
@@ -117,42 +193,68 @@ const getAllMyOrdenesWithPages = async (
   estado = 0,
   id_user,
 ) => {
-  return database
-    .select(
-      "a.orden_id",
-      "a.pedido_id",
-      "a.id_user",
-      "a.fecha",
-      "a.estatus",
-      "a.estado",
-      "b.name as nombre",
-      "b.lastname as apellido",
-      "c.nombre_status",
-      "d.nombre as nombre_cliente",
-      "d.direccion as direccion_cliente",
-      "d.numero as numero_cliente",
-    )
-    .from("ordenes as a")
-    .innerJoin("usuarios as b", "a.id_user", "b.user_id")
-    .innerJoin("status as c", "a.estado", "c.status_id")
-    .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
-    .where("a.id_user", "=", id_user)
-    .andWhere("a.estatus", "=", 1)
-    .limit(limit)
-    .offset(offset)
-    .orderBy(`${atrib}`, `${order}`)
-    .then((orden) => {
-      if (estado !== 0) {
-        if (orden.length > 0)
-          return orden.filter((ord) => ord.estado === estado);
-        return orden;
-      } else {
-        return orden;
-      }
-    })
-    .catch((error) => {
-      return error;
-    });
+  switch (estado) {
+    case 0:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.id_user", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(`${atrib}`, `${order}`)
+        .then((orden) => orden)
+        .catch((error) => error);
+
+    default:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("a.id_user", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .andWhere("a.estado", "=", estado)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(`${atrib}`, `${order}`)
+        .then((orden) => orden)
+        .catch((error) => error);
+  }
 };
 
 const getOrdenesDataExcel = async () => {
@@ -176,12 +278,8 @@ const getOrdenesDataExcel = async () => {
     .innerJoin("status as c", "a.estado", "c.status_id")
     .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
-    .then((orden) => {
-      return orden;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((orden) => orden)
+    .catch((error) => error);
 };
 
 const getOrdersByEstado = (array, estado) => {
@@ -304,12 +402,8 @@ const getOrdenesBySearch = async (text) => {
     .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .where("d.nombre", "like", `%${text}%`)
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((data) => data)
+    .catch((err) => err);
 };
 
 const crearOrden = async (obj, id_user, fecha) => {
@@ -322,12 +416,8 @@ const crearOrden = async (obj, id_user, fecha) => {
       estatus: 1,
       estado: 1,
     })
-    .then((orden) => {
-      return orden;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((orden) => orden)
+    .catch((err) => err);
 };
 
 const crearProducto = async (
@@ -353,12 +443,8 @@ const crearProducto = async (
       estatus,
       orden_id,
     })
-    .then((compra) => {
-      return compra;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((compra) => compra)
+    .catch((err) => err);
 };
 
 const getOrdenDetailById = async (id_orden) => {
@@ -388,12 +474,8 @@ const getOrdenDetailById = async (id_orden) => {
     .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
     .where("a.estatus", "=", 1)
     .andWhere("a.orden_id", "=", id_orden)
-    .then((orden) => {
-      return orden;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((orden) => orden)
+    .catch((err) => err);
 };
 
 const getAllProductosByOrdenId = async (id_orden) => {
@@ -412,12 +494,8 @@ const getAllProductosByOrdenId = async (id_orden) => {
     .from("linea_compra")
     .where("orden_id", "=", id_orden)
     .andWhere("estatus", "=", 1)
-    .then((orden) => {
-      return orden;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((orden) => orden)
+    .catch((error) => error);
 };
 
 const getAllPagosByOrdenId = async (id_orden) => {
@@ -430,12 +508,8 @@ const getAllPagosByOrdenId = async (id_orden) => {
     .andWhere("a.estatus", "=", 1)
     .andWhere("b.estatus", "=", 1)
     .orderBy("a.pago_id", "desc")
-    .then((orden) => {
-      return orden;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((orden) => orden)
+    .catch((error) => error);
 };
 
 // const updateOrderDetails = async (
@@ -465,12 +539,8 @@ const updateProductoEstatus = async (linea_id, estatus) => {
     .update({
       estatus: estatus,
     })
-    .then((producto) => {
-      return producto;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((producto) => producto)
+    .catch((err) => err);
 };
 
 const updateProveedorToProducto = async (linea_id, proveedor_id) => {
@@ -479,12 +549,8 @@ const updateProveedorToProducto = async (linea_id, proveedor_id) => {
     .update({
       proveedor_id: proveedor_id,
     })
-    .then((producto) => {
-      return producto;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((producto) => producto)
+    .catch((err) => err);
 };
 
 const addCantidadProductos = async (linea_id, cantidad) => {
@@ -493,12 +559,8 @@ const addCantidadProductos = async (linea_id, cantidad) => {
     .update({
       cantidad: cantidad + 1,
     })
-    .then((producto) => {
-      return producto;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((producto) => producto)
+    .catch((err) => err);
 };
 
 const restarCantidadProductos = async (linea_id, cantidad) => {
@@ -507,12 +569,8 @@ const restarCantidadProductos = async (linea_id, cantidad) => {
     .update({
       cantidad: cantidad - 1,
     })
-    .then((producto) => {
-      return producto;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((producto) => producto)
+    .catch((err) => err);
 };
 
 const updateOrdenEstado = async (id_orden, estado) => {
@@ -521,12 +579,8 @@ const updateOrdenEstado = async (id_orden, estado) => {
     .update({
       estado: estado,
     })
-    .then((orden) => {
-      return orden;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((orden) => orden)
+    .catch((err) => err);
 };
 
 const addPago = async (
@@ -552,12 +606,8 @@ const addPago = async (
       adjunto: adjunto,
       comentarios: comentarios,
     })
-    .then((pago) => {
-      return pago;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((pago) => pago)
+    .catch((err) => err);
 };
 
 const updatePagoEstatus = async (pago_id, estatus) => {
@@ -566,12 +616,8 @@ const updatePagoEstatus = async (pago_id, estatus) => {
     .update({
       estatus: estatus,
     })
-    .then((pago) => {
-      return pago;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((pago) => pago)
+    .catch((err) => err);
 };
 
 const getProductoById = (linea_id) => {
@@ -579,12 +625,8 @@ const getProductoById = (linea_id) => {
     .select("producto as descripcion", "talla", "color", "precio")
     .from("linea_compra")
     .where("linea_id", "=", linea_id)
-    .then((producto) => {
-      return producto;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((producto) => producto)
+    .catch((err) => err);
 };
 
 const updateProductoCampos = async (
@@ -602,12 +644,199 @@ const updateProductoCampos = async (
       color,
       precio,
     })
-    .then((producto) => {
-      return producto;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((producto) => producto)
+    .catch((err) => err);
+};
+
+const getAdminRevendedor = (id_cliente) => {
+  return database
+    .select("*")
+    .from("clientes")
+    .where("cliente_id", "=", id_cliente)
+    .then((response) => response)
+    .catch((error) => error);
+};
+
+const getAllMyOrdenesRevendedor = async (estado = 0, id_user) => {
+  switch (estado) {
+    case 0:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("d.cliente_id", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .then((orden) => orden)
+        .catch((error) => error);
+
+    default:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("d.cliente_id", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .andWhere("a.estado", "=", estado)
+        .then((orden) => orden)
+        .catch((error) => error);
+  }
+};
+
+const getAllMyOrdenesWithPagesRevendedor = async (
+  offset,
+  limit,
+  atrib,
+  order,
+  estado = 0,
+  id_user,
+) => {
+  switch (estado) {
+    case 0:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("d.cliente_id", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(`${atrib}`, `${order}`)
+        .then((orden) => orden)
+        .catch((error) => error);
+
+    default:
+      return database
+        .select(
+          "a.orden_id",
+          "a.pedido_id",
+          "a.id_user",
+          "a.fecha",
+          "a.estatus",
+          "a.estado",
+          "b.name as nombre",
+          "b.lastname as apellido",
+          "c.nombre_status",
+          "d.nombre as nombre_cliente",
+          "d.direccion as direccion_cliente",
+          "d.numero as numero_cliente",
+          "d.id_admin",
+          "d.user_id as revendedorRef",
+        )
+        .from("ordenes as a")
+        .innerJoin("usuarios as b", "a.id_user", "b.user_id")
+        .innerJoin("status as c", "a.estado", "c.status_id")
+        .innerJoin("clientes as d", "a.id_cliente", "d.cliente_id")
+        .where("d.cliente_id", "=", id_user)
+        .andWhere("a.estatus", "=", 1)
+        .andWhere("a.estado", "=", estado)
+        .limit(limit)
+        .offset(offset)
+        .orderBy(`${atrib}`, `${order}`)
+        .then((orden) => orden)
+        .catch((error) => error);
+  }
+};
+
+const paginateQueryMyResultsRevendedora = async (
+  page,
+  limit,
+  atrib,
+  order,
+  getAll,
+  getWithPages,
+  estado,
+  id_user,
+) => {
+  const offset = limit * page - limit;
+  const endIndex = page * limit;
+  const results = {};
+  const total = await getAll(estado, id_user);
+  const definitivo_total = await getAll(0, id_user);
+  results.dashboard = {
+    total: definitivo_total.length,
+    pendiente: getOrdersByEstado(definitivo_total, 1),
+    aprobadas: getOrdersByEstado(definitivo_total, 2),
+    llego: getOrdersByEstado(definitivo_total, 3),
+    saldo_pendiente: getOrdersByEstado(definitivo_total, 4),
+    completadas: getOrdersByEstado(definitivo_total, 5),
+    canceladas: getOrdersByEstado(definitivo_total, 6),
+  };
+  results.total = total.length;
+
+  if (endIndex < total.length) {
+    results.next = {
+      page: page + 1,
+      limit: limit,
+    };
+  }
+
+  if (page > 1) {
+    results.previous = {
+      page: page,
+      limit: limit,
+    };
+  }
+
+  results.results = await getWithPages(
+    offset,
+    limit,
+    atrib,
+    order,
+    estado,
+    id_user,
+  );
+  return results;
 };
 
 module.exports.getAllOrdenes = getAllOrdenes;
@@ -633,3 +862,7 @@ module.exports.addPago = addPago;
 module.exports.updatePagoEstatus = updatePagoEstatus;
 module.exports.getProductoById = getProductoById;
 module.exports.updateProductoCampos = updateProductoCampos;
+module.exports.getAdminRevendedor = getAdminRevendedor;
+module.exports.getAllMyOrdenesRevendedor = getAllMyOrdenesRevendedor;
+module.exports.getAllMyOrdenesWithPagesRevendedor = getAllMyOrdenesWithPagesRevendedor;
+module.exports.paginateQueryMyResultsRevendedora = paginateQueryMyResultsRevendedora;

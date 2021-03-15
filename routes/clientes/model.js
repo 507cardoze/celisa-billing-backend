@@ -112,6 +112,7 @@ const verifyUserwithClientes = async (
             activo: 1,
             numero,
             user_id,
+            id_admin: 7,
           })
           .then((cliente) => {
             console.log(
@@ -217,6 +218,22 @@ const updateClientRevendedoraDetails = async (obj) => {
     });
 };
 
+const getClientDetailsByUserID = async (user_id) => {
+  return database
+    .select("a.*", "b.pais")
+    .from("clientes as a")
+    .innerJoin("pais as b", "a.id_pais", "b.pais_id")
+    .where("a.activo", "=", 1)
+    .andWhere("a.user_id", "=", user_id)
+    .orderBy("a.nombre", "ASC")
+    .then((cliente) => {
+      return cliente;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 module.exports.getAllClientes = getAllClientes;
 module.exports.getAllClientesDataExcel = getAllClientesDataExcel;
 module.exports.getAllClientesWithPages = getAllClientesWithPages;
@@ -227,3 +244,4 @@ module.exports.updateClientDetails = updateClientDetails;
 module.exports.getClientBySearch = getClientBySearch;
 module.exports.crearCliente = crearCliente;
 module.exports.updateClientRevendedoraDetails = updateClientRevendedoraDetails;
+module.exports.getClientDetailsByUserID = getClientDetailsByUserID;

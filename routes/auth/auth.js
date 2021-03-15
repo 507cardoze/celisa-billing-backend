@@ -37,6 +37,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json(`Contraseña incorrecta.`);
     let user = {
       user_id: userData[0].user_id,
+      rol: userData[0].rol,
     };
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
