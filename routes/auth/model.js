@@ -184,8 +184,7 @@ const updateUserDetails = async (
 };
 
 const getUserByPermiso = (array, permiso) => {
-  return array.filter((user) => user.rol === permiso && user.estado === 1)
-    .length;
+  return array.filter((user) => user.rol === permiso).length;
 };
 
 const paginateQueryResults = async (
