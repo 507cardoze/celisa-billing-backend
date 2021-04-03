@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const compression = require("compression");
 const morgan = require("morgan");
 
 //Middlewares
@@ -20,7 +19,6 @@ app.use(
   }),
 );
 app.use(cors());
-app.use(compression());
 
 // importando rutas
 const auth = require("./routes/auth/auth");
