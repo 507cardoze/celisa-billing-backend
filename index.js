@@ -1,14 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const compression = require("compression");
-const helmet = require("helmet");
 const morgan = require("morgan");
 
 //Middlewares
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
-app.use(helmet());
 if (process.env.NODE_ENV === "development") {
   app.use(
     morgan(":method :url :status :res[content-length] - :response-time ms"),
