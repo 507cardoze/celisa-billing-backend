@@ -12,9 +12,7 @@ const getAllClientes = async (estado = 0) => {
         return cliente.filter((clt) => clt.activo === estado);
       return cliente;
     })
-    .catch((error) => {
-      return error;
-    });
+    .catch((error) => error);
 };
 
 const getAllClientesDataExcel = async () => {
@@ -24,12 +22,8 @@ const getAllClientesDataExcel = async () => {
     .innerJoin("pais as b", "a.id_pais", "b.pais_id")
     .where("a.activo", "=", 1)
     .orderBy("a.nombre", "ASC")
-    .then((cliente) => {
-      return cliente;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 const getAllClientesWithPages = async (
@@ -52,9 +46,7 @@ const getAllClientesWithPages = async (
         return cliente.filter((clt) => clt.activo === estado);
       return cliente;
     })
-    .catch((error) => {
-      return error;
-    });
+    .catch((error) => error);
 };
 
 const paginateQueryResults = async (
@@ -116,22 +108,18 @@ const verifyUserwithClientes = async (
           })
           .then((cliente) => {
             console.log(
-              "creacion de revendedora en tabla de clientes: ",
+              `creacion de datos de cliente del usuario nuevo, ${nombre}`,
               cliente,
             );
             return cliente[0];
           })
-          .catch((err) => {
-            return err;
-          });
+          .catch((error) => error);
       } else {
         console.log("get cliente id", cliente);
         return cliente[0].cliente_id;
       }
     })
-    .catch((err) => {
-      return err;
-    });
+    .catch((error) => error);
 };
 
 const getClientDtails = async (client_id) => {
@@ -142,12 +130,8 @@ const getClientDtails = async (client_id) => {
     .where("a.activo", "=", 1)
     .andWhere("a.cliente_id", "=", client_id)
     .orderBy("a.nombre", "ASC")
-    .then((cliente) => {
-      return cliente;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 const updateClientDetails = async (obj) => {
@@ -160,12 +144,8 @@ const updateClientDetails = async (obj) => {
       numero: obj.numero,
     })
     .where("cliente_id", "=", obj.id_cliente)
-    .then((cliente) => {
-      return cliente;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 const getClientBySearch = async (text) => {
@@ -176,12 +156,8 @@ const getClientBySearch = async (text) => {
     .where("a.activo", "=", 1)
     .andWhere("a.nombre", "like", `%${text}%`)
     .orderBy("a.nombre", "ASC")
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 const crearCliente = async (obj) => {
@@ -195,12 +171,8 @@ const crearCliente = async (obj) => {
       numero: obj.numero,
       user_id: 0,
     })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 const updateClientRevendedoraDetails = async (obj) => {
@@ -210,12 +182,8 @@ const updateClientRevendedoraDetails = async (obj) => {
       id_admin: obj.selectedAdmin,
     })
     .where("cliente_id", "=", obj.id_cliente)
-    .then((cliente) => {
-      return cliente;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 const getClientDetailsByUserID = async (user_id) => {
@@ -226,12 +194,8 @@ const getClientDetailsByUserID = async (user_id) => {
     .where("a.activo", "=", 1)
     .andWhere("a.user_id", "=", user_id)
     .orderBy("a.nombre", "ASC")
-    .then((cliente) => {
-      return cliente;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((cliente) => cliente)
+    .catch((error) => error);
 };
 
 module.exports.getAllClientes = getAllClientes;

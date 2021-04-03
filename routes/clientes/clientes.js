@@ -3,7 +3,6 @@ const verify = require("../../functions/verifytoken");
 
 const {
   getAllClientes,
-  getAllClientesDataExcel,
   getAllClientesWithPages,
   paginateQueryResults,
   verifyUserwithClientes,
@@ -16,23 +15,14 @@ const {
 
 const { getUserData } = require("../auth/model");
 
-router.get("/all-clientes", verify, async (req, res) => {
-  const page = parseInt(req.query.page);
-  const limit = parseInt(req.query.limit);
-  const atrib = req.query.atrib;
-  const order = req.query.order;
-  const excel = req.query.excel;
-  const estado = parseInt(req.query.estado);
+router
+  .get("/all-clientes", verify, async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const atrib = req.query.atrib;
+    const order = req.query.order;
+    const estado = parseInt(req.query.estado);
 
-  if (excel) {
-    try {
-      const query = await getAllClientesDataExcel();
-      console.log("data de ordenes para excel ...");
-      res.status(200).json(query);
-    } catch (error) {
-      res.status(500).json(error);
-    }
-  } else {
     try {
       if (
         req.query.page === undefined &&
@@ -60,100 +50,95 @@ router.get("/all-clientes", verify, async (req, res) => {
     } catch (error) {
       res.status(500).json(error);
     }
-  }
-});
+  })
+  .get("/verify-loggedUser", verify, async (req, res) => {
+    const user_id = req.user.user_id;
 
-router.get("/verify-loggedUser", verify, async (req, res) => {
-  const user_id = req.user.user_id;
+    try {
+      const verifyUser = await getUserData(user_id);
 
-  try {
-    const verifyUser = await getUserData(user_id);
-
-    if (verifyUser.length > 0) {
-      const query = await verifyUserwithClientes(
-        verifyUser[0].user_id,
-        `${verifyUser[0].name} ${verifyUser[0].lastname}`,
-        verifyUser[0].address,
-        verifyUser[0].id_pais,
-        verifyUser[0].contact_number,
-      );
-      console.log("query", query);
-      res.status(200).json(query);
-    } else {
-      console.log("query", query);
-      res.status(400).json("usuario no existe");
+      if (verifyUser.length > 0) {
+        const query = await verifyUserwithClientes(
+          verifyUser[0].user_id,
+          `${verifyUser[0].name} ${verifyUser[0].lastname}`,
+          verifyUser[0].address,
+          verifyUser[0].id_pais,
+          verifyUser[0].contact_number,
+        );
+        console.log("query", query);
+        res.status(200).json(query);
+      } else {
+        console.log("query", query);
+        res.status(400).json("usuario no existe");
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
     }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
+  })
+  .get("/clientDetails", verify, async (req, res) => {
+    const cliente_id = req.query.cliente_id;
 
-router.get("/clientDetails", verify, async (req, res) => {
-  const cliente_id = req.query.cliente_id;
+    try {
+      const query = await getClientDtails(cliente_id);
+      console.log("sacando detalles de cliente");
+      res.status(200).json(query);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  })
+  .put("/clientDetails", verify, async (req, res) => {
+    const userData = req.body;
+    try {
+      const validacion = await getClientDtails(userData.id_cliente);
+      if (validacion.length === 0)
+        return res.status(400).json("cliente existe");
+      await updateClientDetails(userData);
+      console.log("modificando detalles de cliente");
+      res.status(200).json(`Detalles Actualizados.`);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  })
+  .put("/clientRevendedora", verify, async (req, res) => {
+    const userData = req.body;
+    try {
+      const validacion = await getClientDtails(userData.id_cliente);
+      if (validacion.length === 0)
+        return res.status(400).json("cliente existe");
+      await updateClientRevendedoraDetails(userData);
+      console.log("modificando revendedoras del cliente");
+      res.status(200).json(`Detalles Actualizados.`);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  })
+  .post("/clientDetails", verify, async (req, res) => {
+    const userData = req.body;
 
-  try {
-    const query = await getClientDtails(cliente_id);
-    console.log("sacando detalles de cliente");
-    res.status(200).json(query);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
+    try {
+      await crearCliente(userData);
+      console.log("Cliente Creado");
+      res.status(200).json(`Cliente Creado.`);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  })
+  .get("/clientSearch", verify, async (req, res) => {
+    const texto = req.query.texto;
 
-router.put("/clientDetails", verify, async (req, res) => {
-  const userData = req.body;
-  try {
-    const validacion = await getClientDtails(userData.id_cliente);
-    if (validacion.length === 0) return res.status(400).json("cliente existe");
-    await updateClientDetails(userData);
-    console.log("modificando detalles de cliente");
-    res.status(200).json(`Detalles Actualizados.`);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
-router.put("/clientRevendedora", verify, async (req, res) => {
-  const userData = req.body;
-  try {
-    const validacion = await getClientDtails(userData.id_cliente);
-    if (validacion.length === 0) return res.status(400).json("cliente existe");
-    await updateClientRevendedoraDetails(userData);
-    console.log("modificando revendedoras del cliente");
-    res.status(200).json(`Detalles Actualizados.`);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
-
-router.post("/clientDetails", verify, async (req, res) => {
-  const userData = req.body;
-
-  try {
-    await crearCliente(userData);
-    console.log("Cliente Creado");
-    res.status(200).json(`Cliente Creado.`);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
-
-router.get("/clientSearch", verify, async (req, res) => {
-  const texto = req.query.texto;
-
-  try {
-    const query = await getClientBySearch(texto);
-    console.log("buscando cliente");
-    console.log(query);
-    res.status(200).json(query);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
+    try {
+      const query = await getClientBySearch(texto);
+      console.log("buscando cliente");
+      res.status(200).json(query);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  });
 
 module.exports = router;

@@ -19,12 +19,8 @@ const validateLoginInfo = async (username) => {
     .innerJoin("pais as b", "b.pais_id", "a.id_pais")
     .where("a.username", "=", username)
     .andWhere("a.estado", "=", 1)
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const setNewUser = async (
@@ -51,12 +47,8 @@ const setNewUser = async (
       id_pais,
       estado: 0,
     })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const saveRefreshToken = async (refreshToken, username, time) => {
@@ -67,12 +59,8 @@ const saveRefreshToken = async (refreshToken, username, time) => {
       login_time: time,
       last_activity: time,
     })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const verifyRefreshTokenDB = async (refreshToken) => {
@@ -82,12 +70,8 @@ const verifyRefreshTokenDB = async (refreshToken) => {
     .innerJoin("pais as b", "b.pais_id", "a.id_pais")
     .where("a.RT", "=", refreshToken)
     .andWhere("a.estado", "=", 1)
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const resetUserPassword = async (user_id, password) => {
@@ -96,12 +80,8 @@ const resetUserPassword = async (user_id, password) => {
     .update({
       password: password,
     })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const deleteRefreshToken = async (user_id) => {
@@ -110,12 +90,8 @@ const deleteRefreshToken = async (user_id) => {
     .update({
       RT: null,
     })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const getUserData = async (user_id) => {
@@ -124,12 +100,8 @@ const getUserData = async (user_id) => {
     .from("usuarios as a")
     .innerJoin("pais as b", "b.pais_id", "a.id_pais")
     .where("a.user_id", "=", user_id)
-    .then((user) => {
-      return user;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const getUserDataExcel = async () => {
@@ -146,12 +118,8 @@ const getUserDataExcel = async () => {
     )
     .from("usuarios as a")
     .innerJoin("pais as b", "b.pais_id", "a.id_pais")
-    .then((user) => {
-      return user;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const updateUserDetails = async (
@@ -175,12 +143,8 @@ const updateUserDetails = async (
       address: address,
       rol: rol,
     })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const getUserByPermiso = (array, permiso) => {
@@ -229,12 +193,8 @@ const getAllUsers = async () => {
   return database
     .select("*")
     .from("usuarios")
-    .then((users) => {
-      return users;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const getAllUsersWithPages = async (offset, limit, atrib, order) => {
@@ -244,12 +204,8 @@ const getAllUsersWithPages = async (offset, limit, atrib, order) => {
     .limit(limit)
     .offset(offset)
     .orderBy(`${atrib}`, `${order}`)
-    .then((users) => {
-      return users;
-    })
-    .catch((error) => {
-      return error;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const getUserBySearch = (text) => {
@@ -261,12 +217,8 @@ const getUserBySearch = (text) => {
     .orWhere("contact_number", "like", `%${text}%`)
     .orWhere("correo_electronico", "like", `%${text}%`)
     .orWhere("address", "like", `%${text}%`)
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 const updateUserEstado = async (user_id, estado) => {
@@ -275,12 +227,8 @@ const updateUserEstado = async (user_id, estado) => {
     .update({
       estado: estado,
     })
-    .then((user) => {
-      return user;
-    })
-    .catch((err) => {
-      return err;
-    });
+    .then((user) => user)
+    .catch((err) => err);
 };
 
 module.exports.generateAccessToken = generateAccessToken;

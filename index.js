@@ -1,14 +1,16 @@
 const express = require("express");
-const fileUpload = require("express-fileupload");
 const cors = require("cors");
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
 
 //Middlewares
-dotenv.config();
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
 const app = express();
-app.use(fileUpload());
-app.use(bodyParser.json({ limit: "5mb" }));
+const port = process.env.PORT || 5000;
+app.use(express.json({ limit: "5mb" }));
+app.use(
+  express.urlencoded({
+    extended: true,
+  }),
+);
 app.use(cors());
 
 // importando rutas
@@ -32,6 +34,7 @@ app.use("/v1/tipoPago", tipoPago);
 app.use("/v1/reportes", reportes);
 app.use("/v1/clientes", clientes);
 
-app.listen(process.env.PORT, () =>
-  console.log(`servidor escuchando: localhost:${process.env.PORT}`),
-);
+app.listen(port, (error) => {
+  if (error) throw error;
+  console.log(`servidor escuchando: localhost:${port}`);
+});
