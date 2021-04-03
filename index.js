@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const compression = require("compression");
+const helmet = require("helmet");
 
 //Middlewares
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
@@ -12,6 +14,8 @@ app.use(
   }),
 );
 app.use(cors());
+app.use(helmet());
+app.use(compression());
 
 // importando rutas
 const auth = require("./routes/auth/auth");
